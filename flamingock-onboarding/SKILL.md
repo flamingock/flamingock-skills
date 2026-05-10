@@ -32,7 +32,7 @@ Collect the routing fields first. If any routing field is missing, ask only for 
 
 ### Value fields
 
-5. **Flamingock version** — explicit version or omit it so the agent tries Maven Central first and falls back to a placeholder if needed
+5. **Flamingock version** — explicit version or omit it so the agent tries to resolve it using the provided scripts (falling back to a placeholder if resolution fails)
 6. **Changes package** — exact package for `@Stage(location = "...")` or `none yet`
 7. **Activation class** — `main class`, `dedicated config class`, or the exact class name where `@EnableFlamingock` should live
 8. **Community AuditStore backend** — only when edition is `community`: `mongodb-sync`, `mongodb-springdata` (Spring Boot only), `sql/jdbc`, `dynamodb`, `couchbase`, `auto-detect-from-targetsystem`, or `none yet`
@@ -71,8 +71,10 @@ If any of `Runtime`, `Edition`, or `Build tool` is missing or ambiguous, ask onl
 Before dependency output:
 
 - if the user supplied a Flamingock version, use it
-- otherwise try Maven Central for the latest published Flamingock version
-- if lookup fails or remains ambiguous, keep generating the resolved path with placeholders such as `[FLAMINGOCK_VERSION]` or `${flamingockVersion}` and explicitly warn the user to replace them
+- otherwise, try to resolve the latest version using `scripts/last-version.py` or `scripts/last-version.sh`:
+  - for **Gradle plugins**: use `io.flamingock` as group/plugin_id and no artifact
+  - for **Maven/dependencies**: use `io.flamingock` as group and `flamingock-bom` as artifact
+- if script execution fails, lookup fails, or remains ambiguous, keep generating the resolved path with placeholders such as `[FLAMINGOCK_VERSION]` or `${flamingockVersion}` and explicitly warn the user to replace them
 
 ### Community edition guard
 

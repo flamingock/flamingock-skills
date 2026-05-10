@@ -151,10 +151,10 @@
       "id": 10,
       "name": "cloud-placeholders-do-not-block",
       "prompt": "Onboard Flamingock in my Spring Boot Java app. Runtime is springboot, language is Java, edition is Cloud, build tool is Maven, TargetSystem to use is none yet, changes package is none yet, and I want @EnableFlamingock on a dedicated config class. I do not know the apiToken, environment name, service name, or Flamingock version yet. Generate the setup.",
-      "expected_output": "The skill generates Cloud onboarding with placeholders for version and Cloud values, omits stages because there is no changes package yet, and does not block on the missing values.",
+      "expected_output": "The skill generates Cloud onboarding, attempting to resolve the version using scripts first, and using placeholders for the missing Cloud values and version if resolution fails.",
       "files": [],
       "expectations": [
-        "The response includes BOM and compiler plugin guidance using ${flamingockVersion} or another explicit version placeholder",
+        "The response includes BOM and compiler plugin guidance using either a resolved version (from scripts) or an explicit version placeholder like ${flamingockVersion} if resolution fails",
         "The response includes explicit Cloud placeholders such as [FLAMINGOCK_API_TOKEN], [FLAMINGOCK_ENVIRONMENT], and [FLAMINGOCK_SERVICE]",
         "The response includes @EnableFlamingock without any stages attribute",
         "The response does not create an AuditStore bean",
@@ -173,6 +173,18 @@
         "The response does not call setAuditStore(...) or XxxAuditStore.from(...)",
         "The response still emits the Kotlin standalone onboarding path",
         "The response explains that stages and AuditStore can be added later"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "automated-version-resolution-no-input",
+      "prompt": "Onboard Flamingock in my Spring Boot Java app. Runtime is springboot, language is Java, edition is Community, build tool is Maven, TargetSystem to use is mongoTarget, Community AuditStore backend is mongodb-sync, changes package is com.acme.demo.changes, and I want @EnableFlamingock on the main class. I don't know the version.",
+      "expected_output": "The skill resolves the latest Flamingock version using the provided scripts and includes it in the Maven BOM and compiler plugin configuration.",
+      "files": [],
+      "expectations": [
+        "The response does not contain ${flamingockVersion} or [FLAMINGOCK_VERSION] if the script resolution was successful",
+        "The response includes a specific version number (e.g., 1.2.3) in the flamingock-bom and flamingock-processor path",
+        "The response confirms that the version was resolved automatically using scripts"
       ]
     }
   ]
