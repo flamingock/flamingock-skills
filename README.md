@@ -7,6 +7,7 @@ A collection of AI agent skills for the [Flamingock](https://flamingock.io) ecos
 | Skill | Description |
 |-------|-------------|
 | [`flamingock-onboarding`](./flamingock-onboarding/) | Configure Flamingock's entry point in a project — standalone Java or Spring Boot, Community or Cloud edition — adding the correct dependencies and writing the initialization code |
+| [`flamingock-mongodb-sync-targetsystem`](./flamingock-mongodb-sync-targetsystem/) | Configure `MongoDBSyncTargetSystem` for standalone or Spring Boot Java/Kotlin projects using the MongoDB sync driver, with language-gated single-path output and TargetSystem-only scope |
 
 ---
 
@@ -32,6 +33,8 @@ mkdir -p your-project/.agents/skills/
 
 ```bash
 cp -r flamingock-onboarding/ your-project/.agents/skills/
+# or
+cp -r flamingock-mongodb-sync-targetsystem/ your-project/.agents/skills/
 ```
 
 Your project structure should look like this:
@@ -40,7 +43,11 @@ Your project structure should look like this:
 your-project/
 └── .agents/
     └── skills/
-        └── flamingock-onboarding/
+        ├── flamingock-onboarding/
+        │   ├── SKILL.md
+        │   └── references/
+        │       └── ...
+        └── flamingock-mongodb-sync-targetsystem/
             ├── SKILL.md
             └── references/
                 └── ...
@@ -50,8 +57,8 @@ your-project/
 
 ```bash
 cd your-project
-git add .agents/skills/flamingock-onboarding/
-git commit -m "chore: add flamingock-onboarding agent skill"
+git add .agents/skills/flamingock-*/
+git commit -m "chore: add flamingock agent skill"
 ```
 
 The skill travels with the repo, so every developer (and every CI agent) on the project gets it automatically.

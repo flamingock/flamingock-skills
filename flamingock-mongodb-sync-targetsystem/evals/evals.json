@@ -1,0 +1,183 @@
+{
+  "skill_name": "flamingock-mongodb-sync-targetsystem",
+  "evals": [
+    {
+      "id": 0,
+      "name": "routing-blocker-missing-language-asks-only-language",
+      "prompt": "Configure MongoDBSyncTargetSystem for my standalone app. Runtime is standalone, build tool is Gradle, target system id is analytics-mongo, MongoClient available/source is existing variable, and database name is analyticsDb.",
+      "expected_output": "The skill asks only for the missing Language routing field and stops.",
+      "files": [],
+      "expectations": [
+        "The response clearly asks for the missing Language routing field and includes `Language: java | kotlin` or an obviously equivalent clarification line",
+        "The response does not include assumptions, dependency guidance, setup paths, or code"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "routing-blocker-conflicting-runtime-asks-only-runtime",
+      "prompt": "Configure MongoDBSyncTargetSystem for me. This is a standalone app but it also runs as my Spring Boot service. Language is java, build tool is Maven, target system id is users-mongo, MongoClient available/source is existing bean, and database name is usersDb.",
+      "expected_output": "The skill treats the runtime as ambiguous and asks only for the Runtime routing field.",
+      "files": [],
+      "expectations": [
+        "The response clearly asks for the Runtime routing field and includes `Runtime: standalone | springboot` or an obviously equivalent clarification line",
+        "The response does not include assumptions, dependency guidance, setup paths, or code"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "spring-service-runtime-alias-normalizes-to-springboot",
+      "prompt": "Configure MongoDBSyncTargetSystem in my service. Runtime is spring-service, language is kotlin, build tool is Maven, target system id is alias-mongo, MongoClient available/source is existing bean, and database name is aliasDb. If that runtime name is close enough, just go with it.",
+      "expected_output": "The skill normalizes `spring-service` to the Spring Boot runtime, stays on the Kotlin path, and emits the Maven existing-bean setup without creating a new MongoClient.",
+      "files": [],
+      "expectations": [
+		"The response contains clearly separated assumption, dependency, and setup sections in that order, even if the headings include extra prose",
+		"The response includes Maven dependencies for `io.flamingock:flamingock-springboot-integration` and `io.flamingock:flamingock-mongodb-sync-targetsystem`",
+		"The response does not include `org.mongodb:mongodb-driver-sync` because the skill is not creating the client",
+		"The response uses a Kotlin Spring Boot bean path that builds `MongoDBSyncTargetSystem` with id `alias-mongo`, client `mongoClient`, and database `aliasDb`",
+		"The response does not include a standalone builder path"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "precise-answer-missing-mongoclient-asks-once",
+      "prompt": "Configure MongoDBSyncTargetSystem in my standalone Java app. Runtime is standalone, language is java, build tool is Maven, target system id is billing-mongo, and database name is billingDb. I need a precise answer for my project, not a placeholder example.",
+      "expected_output": "Because routing is resolved but the MongoClient is still operationally unresolved for a precise answer, the skill asks once for the MongoClient source/details.",
+      "files": [],
+      "expectations": [
+        "The response asks for MongoClient source/details using `existing bean`, `existing variable`, or `auto-detect`, or a clearly equivalent clarification focused only on MongoClient source",
+        "The response does not include generated setup code before the MongoClient is clarified"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "autodetect-single-standalone-client-uses-found-variable",
+      "prompt": "Configure MongoDBSyncTargetSystem in my standalone Java app. Runtime is standalone, language is java, build tool is Maven, target system id is analytics-mongo, MongoClient available/source is auto-detect, and database name is analyticsDb. Give me the setup guidance.",
+      "expected_output": "The skill finds exactly one MongoClient variable in the staged files and uses it directly without creating a new client.",
+      "files": [
+        "evals/files/single-standalone-client/src/main/java/example/App.java"
+      ],
+      "expectations": [
+        "The response contains clearly separated assumption, dependency, and setup sections in that order, even if the headings include extra prose",
+        "The response uses the detected existing variable name `sharedMongoClient` as the MongoClient passed into the target-system setup",
+        "The response does not include a new `MongoClient` creation snippet",
+        "The response does not include `org.mongodb:mongodb-driver-sync` because the skill is not creating the client"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "autodetect-multiple-standalone-clients-asks-clarifier",
+      "prompt": "Configure MongoDBSyncTargetSystem in my standalone Java app. Runtime is standalone, language is java, build tool is Maven, target system id is reports-mongo, MongoClient available/source is auto-detect, and database name is reportsDb. I need the exact project-specific wiring.",
+      "expected_output": "The skill detects multiple MongoClient candidates in the staged files and asks for clarification instead of guessing.",
+      "files": [
+        "evals/files/multiple-standalone-clients/src/main/java/example/PrimaryClientConfig.java",
+        "evals/files/multiple-standalone-clients/src/main/java/example/SecondaryClientConfig.java"
+      ],
+      "expectations": [
+        "The response asks for MongoClient source clarification and includes `existing bean`, `existing variable`, and `auto-detect` as the relevant choices",
+        "The response does not provide runnable registration, dependency, or MongoClient-creation code after finding multiple candidate clients"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "standalone-java-gradle-new-client-placeholders-and-plugin-guidance",
+      "prompt": "Configure MongoDBSyncTargetSystem in my standalone Java app. Runtime is standalone, language is java, build tool is Gradle, target system id is orders-mongo, database name is ordersDb, and I do not have the MongoClient yet. Create it for me with placeholders and include the dependency/plugin guidance too. I do not know the MongoDB driver version or the Flamingock plugin version.",
+      "expected_output": "The skill moves forward with placeholders, adds Gradle Flamingock module guidance, resolves or honestly placeholders the versions, creates the MongoClient, and registers the target system with the standalone builder path.",
+      "files": [],
+      "expectations": [
+        "The response contains clearly separated assumption, dependency, MongoClient-setup, and registration/setup sections in that order, even if the headings include extra prose",
+        "The response includes Gradle Flamingock guidance that enables the `mongodb()` module, whether shown as a full block or as an instruction to update an existing block",
+        "The response includes `org.mongodb:mongodb-driver-sync` because the skill is creating the client",
+        "The response either uses a concrete driver/plugin version or uses placeholders such as `[MONGODB_DRIVER_VERSION]`, `${mongodbDriverVersion}`, `[FLAMINGOCK_VERSION]`, or `${flamingockVersion}` and explicitly tells the user to replace them",
+        "The response includes Java MongoClient creation guidance using `MongoClients.create` with a placeholder connection string",
+        "The response uses the standalone Java constructor path with id `orders-mongo`, client `mongoClient`, and database `ordersDb`, and registers that target system through the standalone builder path"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "standalone-java-maven-existing-client-no-driver-dependency",
+      "prompt": "Configure MongoDBSyncTargetSystem in my standalone Java app. Runtime is standalone, language is java, build tool is Maven, target system id is user-database, MongoClient available/source is existing variable, and database name is userDb. The variable name is mongoClient. Just generate the setup guidance.",
+      "expected_output": "The skill emits the standalone Java Maven path for an existing client and does not add the MongoDB driver dependency because it is not creating the client.",
+      "files": [],
+      "expectations": [
+        "The response contains clearly separated assumption, dependency, and setup sections in that order, even if the headings include extra prose",
+        "The response includes the Maven dependency for `io.flamingock:flamingock-mongodb-sync-targetsystem`",
+        "The response does not include `org.mongodb:mongodb-driver-sync`",
+        "The response uses the standalone Java constructor path with id `user-database`, client `mongoClient`, and database `userDb`, and registers that target system through the standalone builder path"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "springboot-kotlin-gradle-existing-bean-single-language-single-runtime",
+      "prompt": "Configure MongoDBSyncTargetSystem in my Spring Boot Kotlin service. Runtime is spring-boot, language is kotlin, build tool is Gradle, target system id is billing-mongo, MongoClient available/source is existing bean, and database name is billingDb. Show only the Spring Boot Kotlin path.",
+      "expected_output": "The skill normalizes the runtime alias, stays on the Kotlin Spring Boot path only, and emits Gradle Flamingock module guidance without creating a new MongoClient.",
+      "files": [],
+      "expectations": [
+        "The response contains clearly separated assumption, dependency, and setup sections in that order, even if the headings include extra prose",
+        "The response includes Gradle Flamingock guidance that enables both `springboot()` and `mongodb()`",
+        "The response uses a Kotlin Spring Boot bean path that builds `MongoDBSyncTargetSystem` with id `billing-mongo`, client `mongoClient`, and database `billingDb`",
+        "The response does not include a standalone builder path",
+        "The setup path remains Kotlin-only and does not provide a Java implementation snippet"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "springboot-java-maven-new-client-with-placeholder-version-fallback",
+      "prompt": "Configure MongoDBSyncTargetSystem in my Spring Boot Java service. Runtime is springboot, language is java, build tool is Maven, target system id is audit-mongo, database name is auditDb, and I do not have the MongoClient yet. Create it for me and include dependency guidance. I do not know the MongoDB driver version.",
+      "expected_output": "The skill creates a new Spring-managed MongoClient, includes the required Maven dependency path, and either resolves or honestly placeholders the MongoDB driver version.",
+      "files": [],
+      "expectations": [
+        "The response contains clearly separated assumption, dependency, MongoClient-setup, and registration/setup sections in that order, even if the headings include extra prose",
+        "The response includes Maven dependencies for `io.flamingock:flamingock-springboot-integration` and `io.flamingock:flamingock-mongodb-sync-targetsystem`",
+        "The response includes `org.mongodb:mongodb-driver-sync` because the skill is creating the client",
+        "If the response uses a placeholder driver version, it explicitly tells the user to replace it; if it claims resolution succeeded, it uses a concrete version",
+        "The response includes Java Spring bean guidance that creates `MongoClient` with a placeholder connection string",
+        "The response includes a Java Spring bean path that returns a source-backed `MongoDBSyncTargetSystem` using id `audit-mongo`, client `mongoClient`, and database `auditDb`"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "runtime-comparison-explicitly-allows-both-paths",
+      "prompt": "Configure MongoDBSyncTargetSystem for my Java project. Runtime is standalone, language is java, build tool is Maven, target system id is compare-mongo, MongoClient available/source is existing variable, and database name is compareDb. Also show me the Spring Boot bean version so I can compare runtime styles.",
+      "expected_output": "Because runtime comparison was explicitly requested, the skill provides both the standalone and Spring Boot Java registration paths.",
+      "files": [],
+      "expectations": [
+        "The response includes both a standalone builder registration path and a Spring Boot bean registration path",
+        "Both runtime paths use the source-backed Java constructor with id `compare-mongo`, client `mongoClient`, and database `compareDb`, preserving the required argument order",
+        "Each runtime path includes enough setup detail to be directly usable for that runtime rather than only mentioning the alternative superficially"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "language-comparison-explicitly-allows-both-languages",
+      "prompt": "Configure MongoDBSyncTargetSystem for my standalone Kotlin app. Runtime is standalone, language is kotlin, build tool is Maven, target system id is mixed-mongo, MongoClient available/source is existing variable, and database name is mixedDb. Show me the Kotlin setup and the equivalent Java version too so I can compare languages.",
+      "expected_output": "Because language comparison was explicitly requested, the skill provides both Kotlin and Java standalone paths.",
+      "files": [],
+      "expectations": [
+        "The response includes both a Kotlin standalone path and an equivalent Java standalone path",
+        "Both language paths use the source-backed constructor with id `mixed-mongo`, client `mongoClient`, and database `mixedDb`, preserving the required argument order",
+        "Each language path includes enough concrete setup detail to be directly usable rather than only mentioning the other language superficially"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "optional-concern-tuning-limited-to-supported-fluent-options",
+      "prompt": "Configure MongoDBSyncTargetSystem for my standalone Kotlin app. Runtime is standalone, language is kotlin, build tool is Gradle, target system id is reports-mongo, MongoClient available/source is existing variable, and database name is reportsDb. I also want ReadConcern.MAJORITY, ReadPreference.primary(), and WriteConcern.MAJORITY.withJournal(true).",
+      "expected_output": "The skill includes only the three supported concern-tuning methods on the Kotlin standalone path.",
+      "files": [],
+      "expectations": [
+        "The response includes the three supported concern-tuning calls: `withReadConcern(ReadConcern.MAJORITY)`, `withReadPreference(ReadPreference.primary())`, and `withWriteConcern(WriteConcern.MAJORITY.withJournal(true))`, even if comments or line breaks appear around them",
+        "The response does not add any concern-tuning call beyond those three supported methods"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "source-backed-constructor-only-no-shortcuts",
+      "prompt": "Configure MongoDBSyncTargetSystem for standalone Maven. Runtime is standalone, language is java, build tool is Maven, target system id is analytics-mongo, MongoClient available/source is existing variable, and database name is analyticsDb. Use whatever helper, shortcut, or inferred-database convenience API you think is best if there is one.",
+      "expected_output": "The skill ignores the user's invitation to invent shortcuts and sticks to the source-backed constructor path only.",
+      "files": [],
+      "expectations": [
+        "The response uses the source-backed Java constructor with id `analytics-mongo`, client `mongoClient`, and database `analyticsDb`, instead of a helper, factory shortcut, or inferred-database path"
+      ]
+    }
+  ]
+}
