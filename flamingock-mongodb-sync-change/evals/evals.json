@@ -1,0 +1,65 @@
+{
+  "skill_name": "flamingock-mongodb-sync-change",
+  "evals": [
+    {
+      "id": 0,
+      "name": "java-dml-backfill-placeholders",
+      "prompt": "I need a Java change to update all user documents and set 'active' to true. I don't have the order or author yet.",
+      "expected_output": "A Java DML class using placeholders for order and author, correctly injecting ClientSession.",
+      "expectations": [
+        "Filename starts with _ORDER__",
+        "Author is TODO",
+        "Uses @TargetSystem(id = \"YOUR_TARGET_SYSTEM_ID\")",
+        "Uses @Apply and @Rollback",
+        "Injects MongoDatabase and ClientSession",
+        "Operations use the session parameter"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "kotlin-ddl-create-collection-idempotent",
+      "prompt": "Create a Kotlin DDL change to create a collection 'audits'.",
+      "expected_output": "A Kotlin DDL class with transactional=false and an idempotency check.",
+      "expectations": [
+        "Language is Kotlin",
+        "Uses @Change(..., transactional = false)",
+        "Uses @TargetSystem(id = \"YOUR_TARGET_SYSTEM_ID\")",
+        "Checks if 'audits' collection exists before creating",
+        "Uses @Apply and @Rollback"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "java-dml-session-propagation",
+      "prompt": "Create a DML change in Java to delete inactive users.",
+      "expected_output": "A Java DML class where delete operations correctly receive the ClientSession.",
+      "expectations": [
+        "Injects ClientSession",
+        "Passes session to collection.deleteMany()",
+        "Transactional is true (default)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "mixed-ddl-dml-refusal",
+      "prompt": "Create one Java Flamingock change that creates a 'logs' collection and inserts a START document into it.",
+      "expected_output": "A refusal to mix DDL and DML in one MongoDB change, with a split into two changes.",
+      "expectations": [
+        "Refuses a single mixed DDL/DML class",
+        "Explains that DDL must be non-transactional and DML must use ClientSession",
+        "Proposes separate DDL and DML changes"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "redirect-to-targetsystem-when-config-missing",
+      "prompt": "Write a MongoDB Flamingock change for my users collection, but I still haven't configured the MongoDB TargetSystem yet.",
+      "expected_output": "A redirection to the MongoDB TargetSystem skill instead of generating the change immediately.",
+      "expectations": [
+        "Recognizes that the TargetSystem setup is missing",
+        "Redirects to flamingock-mongodb-sync-targetsystem",
+        "Does not generate the migration class immediately"
+      ]
+    }
+  ]
+}

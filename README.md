@@ -8,6 +8,7 @@ A collection of AI agent skills for the [Flamingock](https://flamingock.io) ecos
 |-------|-------------|
 | [`flamingock-onboarding`](./flamingock-onboarding/) | Configure Flamingock's entry point in a project — standalone Java or Spring Boot, Community or Cloud edition — adding the correct dependencies and writing the initialization code |
 | [`flamingock-mongodb-sync-targetsystem`](./flamingock-mongodb-sync-targetsystem/) | Configure `MongoDBSyncTargetSystem` for standalone or Spring Boot Java/Kotlin projects using the MongoDB sync driver, with language-gated single-path output and TargetSystem-only scope |
+| [`flamingock-mongodb-sync-change`](./flamingock-mongodb-sync-change/) | Create or review Java/Kotlin `@Change` classes for `MongoDBSyncTargetSystem`, with explicit language gating, strict registration verification, DML-vs-DDL routing, rollback-safe guidance, and hard redirects for setup or Spring Data concerns |
 
 ---
 
@@ -35,6 +36,8 @@ mkdir -p your-project/.agents/skills/
 cp -r flamingock-onboarding/ your-project/.agents/skills/
 # or
 cp -r flamingock-mongodb-sync-targetsystem/ your-project/.agents/skills/
+# or
+cp -r flamingock-mongodb-sync-change/ your-project/.agents/skills/
 ```
 
 Your project structure should look like this:
@@ -47,7 +50,11 @@ your-project/
         │   ├── SKILL.md
         │   └── references/
         │       └── ...
-        └── flamingock-mongodb-sync-targetsystem/
+        ├── flamingock-mongodb-sync-targetsystem/
+        │   ├── SKILL.md
+        │   └── references/
+        │       └── ...
+        └── flamingock-mongodb-sync-change/
             ├── SKILL.md
             └── references/
                 └── ...
