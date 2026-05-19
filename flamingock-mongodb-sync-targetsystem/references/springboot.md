@@ -1,12 +1,12 @@
 ## Spring Boot `MongoDBSyncTargetSystem`
 
-Use this reference only when intake resolves to `runtime = springboot`.
+Use this reference when the request is clearly about Spring Boot wiring for `MongoDBSyncTargetSystem`, or when Spring Boot is the best default fit.
 
 ### Preconditions
 
-- A Spring-managed `MongoClient` bean is available (either existing or to be created).
-- A concrete target system id is known (or use a placeholder).
-- A concrete database name is known (or use a placeholder).
+- A Spring-managed `MongoClient` bean is available, or this skill generates it using the orphan-client rule.
+- Use `"YOUR_TARGET_SYSTEM_ID"` when the target system id is still unknown.
+- Use `"TODO"` when the database name or connection string is still unknown.
 
 ### Dependency guidance
 
@@ -49,7 +49,7 @@ Add the MongoDB sync driver only when you are also creating the `MongoClient` in
 <dependency>
     <groupId>org.mongodb</groupId>
     <artifactId>mongodb-driver-sync</artifactId>
-    <version>4.0.0</version>
+    <version>[VERSION]</version>
 </dependency>
 ```
 
@@ -60,7 +60,7 @@ Add the MongoDB sync driver only when you are also creating the `MongoClient` in
 ```java
 @Bean
 public MongoClient mongoClient() {
-    return MongoClients.create("[MONGODB_CONNECTION_STRING]");
+    return MongoClients.create("TODO");
 }
 ```
 
@@ -69,7 +69,7 @@ public MongoClient mongoClient() {
 ```kotlin
 @Bean
 fun mongoClient(): MongoClient {
-    return MongoClients.create("[MONGODB_CONNECTION_STRING]")
+    return MongoClients.create("TODO")
 }
 ```
 
@@ -80,7 +80,7 @@ Register the target system as a bean and inject the existing `MongoClient` bean:
 ```java
 @Bean
 public MongoDBSyncTargetSystem mongoTargetSystem(MongoClient mongoClient) {
-    return new MongoDBSyncTargetSystem("user-database-id", mongoClient, "userDb");
+    return new MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO");
 }
 ```
 
@@ -91,7 +91,7 @@ Register the same target system as a Spring bean, but keep the code Kotlin-only:
 ```kotlin
 @Bean
 fun mongoTargetSystem(mongoClient: MongoClient): MongoDBSyncTargetSystem {
-    return MongoDBSyncTargetSystem("user-database-id", mongoClient, "userDb")
+    return MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO")
 }
 ```
 
@@ -106,7 +106,7 @@ The supported fluent options are only `withReadConcern`, `withReadPreference`, a
 ```java
 @Bean
 public MongoDBSyncTargetSystem mongoTargetSystem(MongoClient mongoClient) {
-    return new MongoDBSyncTargetSystem("user-database-id", mongoClient, "userDb")
+    return new MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO")
         .withReadConcern(ReadConcern.MAJORITY)
         .withReadPreference(ReadPreference.primary())
         .withWriteConcern(WriteConcern.MAJORITY.withJournal(true));
@@ -120,7 +120,7 @@ Use the same three supported fluent options with Kotlin syntax:
 ```kotlin
 @Bean
 fun mongoTargetSystem(mongoClient: MongoClient): MongoDBSyncTargetSystem {
-    return MongoDBSyncTargetSystem("user-database-id", mongoClient, "userDb")
+    return MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO")
         .withReadConcern(ReadConcern.MAJORITY)
         .withReadPreference(ReadPreference.primary())
         .withWriteConcern(WriteConcern.MAJORITY.withJournal(true))

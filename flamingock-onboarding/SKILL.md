@@ -1,6 +1,6 @@
 ---
 name: flamingock-onboarding
-description: Guide Flamingock onboarding for standalone or Spring Boot Java/Kotlin projects across Community and Cloud editions. Trigger: use this skill whenever the user wants to install, initialize, wire, or activate Flamingock, choose dependencies, configure AuditStore or Cloud properties, place @EnableFlamingock, set up the standalone builder, or configure Spring Boot integration before writing any @Change classes.
+description: Use this skill to set up, bootstrap, wire, or integrate Flamingock from scratch in a Java or Kotlin project (standalone or Spring Boot), including core dependencies, activation, and initial migration infrastructure.
 license: Apache-2.0
 metadata:
   author: Flamingock
@@ -9,166 +9,111 @@ metadata:
 
 # Flamingock Onboarding
 
-## Critical rules
+## Redirections
+- If Flamingock is already set up and you need to configure a TargetSystem for a specific technology -> `flamingock-*-targetsystem`
+- If a TargetSystem is already configured and you need a migration class for a specific technology -> `flamingock-*-change`
 
-1. Resolve all routing fields before code generation: `Runtime`, `Language`, `Edition`, and `Build tool` are mandatory blockers because they change the output path.
-2. Value fields are not blockers after one clarification pass. If a value cannot be confirmed or auto-resolved, generate the selected path with clear placeholders and tell the user what to replace.
-3. Keep `SKILL.md` procedural. Read exactly one matching file from `references/` after the routing fields are complete.
-4. For Community edition, derive the AuditStore from an existing AuditStore-capable TargetSystem: `mongodb-sync`, `mongodb-springdata` (Spring Boot only), `sql/jdbc`, `dynamodb`, or `couchbase`.
-5. If the user does not identify the TargetSystem, inspect the codebase. If exactly one matching TargetSystem exists, use it; if several exist, ask the user which one to use; if none exist, continue onboarding without AuditStore and explain the next step.
-6. If no changes package exists yet, do not block onboarding. Omit `@Stage(...)` / `stages = ...` and explain that it can be added later.
-7. Do not invent an in-memory AuditStore. It is unsupported by the canonical guide.
+## Reference Routing
+- If the request is **Spring Boot + Community** -> read `references/springboot-community.md`
+- If the request is **Spring Boot + Cloud** -> read `references/springboot-cloud.md`
+- If the request is **Standalone + Community** -> read `references/standalone-community.md`
+- If the request is **Standalone + Cloud** -> read `references/standalone-cloud.md`
 
-## Intake flow
+## Philosophy: "Frictionless Start"
+The goal is to get the user up and running in seconds. Do not block the process with questions. Default to **Community Edition**, **Spring Boot**, and **Java** if information is missing, but clearly label these as defaults and explain how to change them.
 
-Collect the routing fields first. If any routing field is missing, ask only for the unresolved routing fields and stop. After the routing fields are known, collect the remaining value fields. Ask once for missing value fields; if the user does not know them or the codebase does not reveal them, continue with placeholders or by omitting the dependent section.
+## Documentation & Grounding
+For the most up-to-date syntax, features, and best practices, always consult the official LLM-optimized documentation:
+- **Official Docs**: https://docs.flamingock.io/llms.txt
 
-### Routing fields
+## Technical Core Principles
 
-1. **Runtime** — `standalone` or `springboot`
-2. **Language** — `java` or `kotlin`
-3. **Edition** — `community` or `cloud`
-4. **Build tool** — `gradle` or `maven`
+### 1. Version Management
+- Always prioritize using the Flamingock BOM (`flamingock-bom`).
+- When adding Flamingock dependencies or the Gradle plugin, first try the bundled `scripts/last-version.py` or `scripts/last-version.sh` to resolve the current version.
+- If version resolution is not possible, use `[VERSION]` as a placeholder and call out the assumption clearly.
 
-### Value fields
+### 2. Activation
+- **Spring Boot**: Use `@EnableFlamingock` on the main application class or a configuration class.
+- **Standalone**: Show the `Flamingock.builder()` setup.
+- **@Stage**: If the changes package is unknown, omit it or use `"com.example.changes"` as a placeholder.
 
-5. **Flamingock version** — explicit version or omit it so the agent tries to resolve it using the provided scripts (falling back to a placeholder if resolution fails)
-6. **Changes package** — exact package for `@Stage(location = "...")` or `none yet`
-7. **Activation class** — `main class`, `dedicated config class`, or the exact class name where `@EnableFlamingock` should live
-8. **Community AuditStore backend** — only when edition is `community`: `mongodb-sync`, `mongodb-springdata` (Spring Boot only), `sql/jdbc`, `dynamodb`, `couchbase`, `auto-detect-from-targetsystem`, or `none yet`
-9. **Community AuditStore TargetSystem** — only when edition is `community`: explicit TargetSystem name, `auto-detect`, or `none yet`
-10. **Cloud values** — only when edition is `cloud`: `apiToken`, environment name, and service name
+### 3. Community AuditStore
+- Derive the AuditStore from the TargetSystem using the pattern: `XxxAuditStore.from(targetSystem)`.
+- If no TargetSystem exists yet, explain that the AuditStore can be added later.
 
-Use this reply template when the user has not already provided everything:
+### 4. Cloud Integration
+- If the user mentions "Cloud", focus on `apiToken`, `environment`, and `service` values.
+- Use placeholders for these values if they are not provided.
 
-```text
-Runtime: standalone | springboot
-Language: java | kotlin
-Edition: community | cloud
-Build tool: gradle | maven
-Flamingock version: <x.y.z> | latest | unknown
-Changes package: <package> | none yet
-Activation class: main class | dedicated config class | exact class name
-Community AuditStore backend: mongodb-sync | mongodb-springdata | sql/jdbc | dynamodb | couchbase | auto-detect-from-targetsystem | none yet
-Community AuditStore TargetSystem: explicit name | auto-detect | none yet
-Cloud values: apiToken=... | environment=... | service=... | use placeholders
+## Build Tool Integration
+- **Gradle**: Show the `io.flamingock` plugin and module configuration (`community()`, `springboot()`, etc.).
+- **Maven**: Provide the `dependencyManagement` and `dependencies` sections.
+
+## Response Structure
+When responding, prefer this order:
+1. **Assumptions**: edition, runtime, language, build tool, and whether a TargetSystem already exists
+2. **Dependencies / Plugin Setup**: Maven or Gradle configuration
+3. **Activation / Bootstrap Code**: `@EnableFlamingock`, `Flamingock.builder()`, or equivalent startup wiring
+4. **AuditStore / Cloud Wiring**: only if the chosen path needs it
+5. **Verification / Next Step**: how to verify the setup, or whether the user should continue with a `flamingock-*-targetsystem` skill
+
+## Example Output
+
+### Maven + Spring Boot Quick Start
+```xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.flamingock</groupId>
+      <artifactId>flamingock-bom</artifactId>
+      <version>[VERSION]</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+
+<dependencies>
+  <dependency>
+    <groupId>io.flamingock</groupId>
+    <artifactId>flamingock-community</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.flamingock</groupId>
+    <artifactId>flamingock-springboot-integration</artifactId>
+  </dependency>
+</dependencies>
 ```
 
-If `Changes package` is missing, generate `@EnableFlamingock` without `@Stage(...)`. If the user does not know `Activation class`, use a placeholder class name in the selected runtime style and tell the user to move the annotation later if needed.
+```java
+package com.example;
 
-## Guards before generation
+import io.flamingock.core.api.audit.AuditStore;
+import io.flamingock.mongodb.sync.auditstore.MongoDBSyncAuditStore;
+import io.flamingock.springboot.EnableFlamingock;
+import io.flamingock.springboot.annotations.Stage;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
-### Language guard
+@SpringBootApplication
+@EnableFlamingock(stages = { @Stage(location = "com.example.changes") })
+public class DemoApplication {
 
-If `Language` is missing or unknown, ask exactly `Language: java | kotlin` and stop. Do not emit code, dependencies, beans, builder setup, or `application.yml`, and never assume Java as the default.
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
 
-### Routing guard
-
-If any of `Runtime`, `Edition`, or `Build tool` is missing or ambiguous, ask only for the unresolved routing fields and stop. Do not guess between `standalone` vs `springboot`, `community` vs `cloud`, or `gradle` vs `maven`.
-
-### Version guard
-
-Before dependency output:
-
-- if the user supplied a Flamingock version, use it
-- otherwise, try to resolve the latest version using `scripts/last-version.py` or `scripts/last-version.sh`:
-  - for **Gradle plugins**: use `io.flamingock` as group/plugin_id and no artifact
-  - for **Maven/dependencies**: use `io.flamingock` as group and `flamingock-bom` as artifact
-- if script execution fails, lookup fails, or remains ambiguous, keep generating the resolved path with placeholders such as `[FLAMINGOCK_VERSION]` or `${flamingockVersion}` and explicitly warn the user to replace them
-
-### Community edition guard
-
-If the user chooses `community`, verify both conditions when the AuditStore section is being emitted:
-
-- the selected AuditStore backend is one of `mongodb-sync`, `mongodb-springdata`, `sql/jdbc`, `dynamodb`, or `couchbase`
-- an AuditStore-capable TargetSystem is available for that backend
-
-If an AuditStore-capable TargetSystem is available, derive the AuditStore from that TargetSystem using the canonical `XxxAuditStore.from(...)` factory.
-
-If the user did not identify a Community AuditStore TargetSystem, inspect the codebase to locate existing TargetSystem definitions or registrations that can back the selected AuditStore backend. Apply this rule:
-
-- one matching TargetSystem found → use it
-- several found → ask the user which one to use and stop before the AuditStore section
-- none found → continue generating onboarding without AuditStore and explain that the AuditStore can be added later after a TargetSystem is created
-
-If the only available option is `non-transactional`, explain that Community still needs a separate AuditStore-capable TargetSystem and omit the AuditStore section.
-
-### Cloud edition guard
-
-If the user chooses `cloud`, do not configure an AuditStore. Ask once for `apiToken`, environment name, and service name. If the user does not know them, continue with placeholders and clearly mark them for replacement.
-
-### Changes package guard
-
-If `Changes package` is known, generate `@EnableFlamingock` with `@Stage(location = "...")`.
-
-If `Changes package` is missing, unknown, or `none yet`, generate only `@EnableFlamingock` and add a short note telling the user to add `@Stage(...)` when the first changes package exists.
-
-## Routing
-
-After intake is complete and guards pass, read exactly one reference file:
-
-| Runtime | Edition | Reference |
-| --- | --- | --- |
-| `standalone` | `community` | `references/standalone-community.md` |
-| `standalone` | `cloud` | `references/standalone-cloud.md` |
-| `springboot` | `community` | `references/springboot-community.md` |
-| `springboot` | `cloud` | `references/springboot-cloud.md` |
-
-Inside the chosen file, follow the subsection for the selected build tool:
-
-- `Gradle` subsection when build tool is `gradle`
-- `Maven` subsection when build tool is `maven`
-
-After selecting the reference file, locate the `Java` or `Kotlin` subsection matching the resolved language inside each relevant section of that file, and follow only that subsection's examples.
-
-## Output rules
-
-When generation is allowed:
-
-1. Briefly restate the resolved path: runtime, language, edition, build tool, Flamingock version source, AuditStore choice if Community, Community AuditStore TargetSystem status when applicable, and changes package status.
-2. Generate only the setup relevant to that path.
-3. For dependencies, use the user version, the Maven Central result, or placeholders if resolution failed. Never silently leave placeholders without calling them out.
-4. If `Changes package` is known, use `@EnableFlamingock` with `@Stage(location = "...")` on the user-selected class.
-5. If `Changes package` is not known yet, generate only `@EnableFlamingock` on the user-selected class.
-6. For standalone, show builder-based setup.
-7. For Spring Boot, show activation, `application.yml` properties, and an `AuditStore` bean only when an AuditStore-capable TargetSystem bean already exists.
-8. For Community, build the AuditStore from the existing TargetSystem using the canonical `XxxAuditStore.from(...)` pattern only when the TargetSystem is actually resolved.
-9. If no Community TargetSystem is resolved yet, omit `setAuditStore(...)` / `AuditStore` beans and explain that this can be added later after the TargetSystem exists.
-10. For Cloud, use builder token/environment/service configuration in standalone or `application.yml` cloud properties in Spring Boot; placeholders are allowed when values are unknown.
-11. If the chosen TargetSystem can support multiple concrete implementations, stay aligned with the user’s existing client/bean.
-12. Emit language-appropriate syntax for the resolved language: Java syntax for `java`, Kotlin syntax for `kotlin`.
-13. Do not mix languages: never emit Java syntax in Kotlin output blocks, and never emit Kotlin syntax in Java output blocks.
-14. Before sending the final answer, verify that every Flamingock annotation, class name, method call, artifact coordinate, and placeholder matches the selected reference path exactly. Do not paraphrase or rename canonical Flamingock names.
-
-## Verification
-
-After generating setup guidance, tell the user to verify in this order:
-
-1. **Dependency resolution** — confirm the chosen Flamingock dependencies and external driver/client dependencies resolve cleanly.
-2. **First run** — start the app with its normal run command and confirm Flamingock initializes. If `@Stage(location = "...")` was included, confirm it discovers the configured changes package and applies pending changes.
-3. **Second run** — restart the app and confirm the same changes are not re-executed.
-4. **Audit artifacts** — when a Community AuditStore was actually configured, inspect the audit storage and verify execution records exist; default names from the canonical guide are `flamingockAuditLog` and `flamingockLock` where applicable.
-
-For Community, point the inspection to the chosen backend:
-
-- MongoDB/Couchbase: collections created and populated
-- SQL/JDBC: tables created and populated
-- DynamoDB: audit and lock tables created and populated
-
-For Cloud, verify cloud configuration is loaded and no AuditStore bean or builder AuditStore setup was created.
-
-If the answer used placeholders, add a final reminder to replace them before considering the setup complete.
-
-## Commands
-
-Use this short workflow every time:
-
-```text
-1. Ask for missing intake answers.
-2. Resolve all routing fields.
-3. Ask once for missing value fields, then fall back to placeholders or omission when allowed.
-4. Apply guards.
-5. Read one reference file.
-6. Generate only the selected setup path.
-7. Finish with the Verification checklist.
+    @Bean
+    AuditStore flamingockAuditStore() {
+        return MongoDBSyncAuditStore.from(targetSystem);
+    }
+}
 ```
+
+## Verification Checklist
+Always end with a short checklist:
+1. Verify dependencies resolve.
+2. Run the app and check for Flamingock startup logs.
+3. Verify the AuditStore (for Community) or Cloud connectivity.

@@ -1,12 +1,12 @@
 ## Standalone `MongoDBSyncTargetSystem`
 
-Use this reference only when intake resolves to `runtime = standalone`.
+Use this reference when the request is clearly about standalone wiring for `MongoDBSyncTargetSystem`, or when standalone is the best default fit.
 
 ### Preconditions
 
-- A `MongoClient` variable is available (either existing or to be created).
-- A concrete target system id is known (or use a placeholder).
-- A concrete database name is known (or use a placeholder).
+- A `MongoClient` variable is available, or this skill generates it using the orphan-client rule.
+- Use `"YOUR_TARGET_SYSTEM_ID"` when the target system id is still unknown.
+- Use `"TODO"` when the database name or connection string is still unknown.
 
 ### Dependency guidance
 
@@ -52,13 +52,13 @@ Add the MongoDB sync driver only when you are also creating the `MongoClient` in
 #### Java
 
 ```java
-MongoClient mongoClient = MongoClients.create("[MONGODB_CONNECTION_STRING]");
+MongoClient mongoClient = MongoClients.create("TODO");
 ```
 
 #### Kotlin
 
 ```kotlin
-val mongoClient = MongoClients.create("[MONGODB_CONNECTION_STRING]")
+val mongoClient = MongoClients.create("TODO")
 ```
 
 ### Java setup path
@@ -67,7 +67,7 @@ Use only the constructor proven by the Flamingock source:
 
 ```java
 MongoDBSyncTargetSystem mongoTargetSystem =
-    new MongoDBSyncTargetSystem("user-database-id", mongoClient, "userDb");
+    new MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO");
 
 Flamingock.builder()
     .addTargetSystem(mongoTargetSystem)
@@ -83,7 +83,7 @@ Use the same source-backed constructor, but keep the output Kotlin-only:
 
 ```kotlin
 val mongoTargetSystem =
-    MongoDBSyncTargetSystem("user-database-id", mongoClient, "userDb")
+    MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO")
 
 Flamingock.builder()
     .addTargetSystem(mongoTargetSystem)
@@ -103,7 +103,7 @@ The supported fluent options are only `withReadConcern`, `withReadPreference`, a
 
 ```java
 MongoDBSyncTargetSystem mongoTargetSystem =
-    new MongoDBSyncTargetSystem("user-database-id", mongoClient, "userDb")
+    new MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO")
         .withReadConcern(ReadConcern.MAJORITY)
         .withReadPreference(ReadPreference.primary())
         .withWriteConcern(WriteConcern.MAJORITY.withJournal(true));
@@ -115,7 +115,7 @@ Use the same three supported fluent options with Kotlin syntax:
 
 ```kotlin
 val mongoTargetSystem =
-    MongoDBSyncTargetSystem("user-database-id", mongoClient, "userDb")
+    MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO")
         .withReadConcern(ReadConcern.MAJORITY)
         .withReadPreference(ReadPreference.primary())
         .withWriteConcern(WriteConcern.MAJORITY.withJournal(true))

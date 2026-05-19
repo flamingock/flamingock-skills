@@ -3,188 +3,51 @@
   "evals": [
     {
       "id": 0,
-      "name": "gating-missing-routing-blocks-code",
-      "prompt": "Set up Flamingock in my app. Just give me the code and do not ask questions.",
-      "expected_output": "The skill refuses to emit setup code because the routing fields are unresolved and asks only for the routing fields first, using the intake template with optional value fields.",
-      "files": [],
+      "name": "springboot-community-java-maven-default",
+      "prompt": "How do I start with Flamingock in my Spring Boot app?",
+      "expected_output": "A complete Maven + Spring Boot Community setup using Java, with canonical placeholders such as [VERSION], TODO, and technology-specific hand-off guidance.",
       "expectations": [
-        "The response does not emit dependency snippets, builder code, bean code, or application.yml before routing is complete",
-        "The response asks for the routing fields Runtime, Language, Edition, and Build tool before any code is generated",
-        "The response uses a structured template format and may include optional value fields such as Flamingock version, TargetSystem, changes package, and cloud/community-specific fields",
-        "The response asks specifically for Language using the exact field name 'Language' with the options 'java' or 'kotlin'"
+        "Uses @EnableFlamingock",
+        "Provides Maven BOM and dependencies",
+        "Defaults to Community edition",
+        "Uses [VERSION] instead of legacy version placeholders",
+        "Includes a verification checklist"
       ]
     },
     {
       "id": 1,
-      "name": "standalone-community-gradle-mongodb-explicit-version",
-      "prompt": "Onboard Flamingock in my standalone Java app. Runtime is standalone, language is Java, edition is Community, build tool is Gradle, TargetSystem to use is mongoTarget, Community AuditStore backend is mongodb-sync, changes package is com.acme.demo.changes, Flamingock version is 1.2.3, and I want @EnableFlamingock on the main class. Generate the setup.",
-      "expected_output": "Gradle plugin-based Community setup for standalone Java, @EnableFlamingock with @Stage on the main class, and builder guidance using MongoDBSyncAuditStore.from(mongoTarget).",
-      "files": [],
+      "name": "standalone-cloud-kotlin-gradle",
+      "prompt": "I want to use Flamingock Cloud in a standalone Kotlin project with Gradle.",
+      "expected_output": "A Kotlin snippet using Flamingock.builder() with Cloud apiToken/environment/service configuration, TODO placeholders, and Gradle plugin setup.",
       "expectations": [
-        "The response includes the Flamingock Gradle plugin with version 1.2.3 and a flamingock block with community() and mongodb()",
-        "The response includes MongoDBSyncAuditStore.from(mongoTarget) — whether inline in setAuditStore() or assigned to a variable first — and passes it to the builder via setAuditStore(...)",
-        "The response includes @EnableFlamingock with @Stage(location = \"com.acme.demo.changes\") on the main class",
-        "The response uses Java syntax (public static void main or Java class declaration)",
-        "The response does not contain [FLAMINGOCK_VERSION] or ${flamingockVersion}"
+        "Language is Kotlin",
+        "Uses setApiToken, setEnvironment, and setService",
+        "Uses the canonical Cloud wording: apiToken, environment, and service",
+        "Uses TODO placeholders for unresolved Cloud values",
+        "Configures Gradle plugin without community() module",
+        "Includes a verification checklist"
       ]
     },
     {
       "id": 2,
-      "name": "springboot-community-maven-sql-explicit-version",
-      "prompt": "Onboard Flamingock in my Spring Boot service. Runtime is springboot, language is Java, edition is Community, build tool is Maven, TargetSystem to use is sqlTargetSystem, Community AuditStore backend is sql/jdbc, changes package is com.acme.billing.changes, Flamingock version is 1.2.3, and I want @EnableFlamingock on the main application class. Generate the setup.",
-      "expected_output": "Maven Spring Boot Community setup, @EnableFlamingock on the application class, SqlAuditStore bean guidance from an existing SqlTargetSystem bean, and application.yml management mode guidance.",
-      "files": [],
+      "name": "onboarding-hand-off-to-targetsystem",
+      "prompt": "Flamingock is already integrated in my app. Now help me connect MongoDB.",
+      "expected_output": "Either a clear redirect to the MongoDB targetsystem skill or a helpful MongoDB targetsystem next-step response that respects the existing Flamingock setup, without redoing onboarding.",
       "expectations": [
-        "The response includes flamingock-bom in dependencyManagement with version 1.2.3, flamingock-community, flamingock-springboot-integration, and flamingock-processor in maven-compiler-plugin",
-        "The response includes an AuditStore bean using SqlAuditStore.from(sqlTargetSystem)",
-        "The response includes application.yml guidance with flamingock.managementMode: INITIALIZING_BEAN",
-        "The response uses Java syntax (public class declaration or @Bean public method)",
-        "The response does not create a SqlTargetSystem bean in this onboarding step",
-        "The response does not contain [FLAMINGOCK_VERSION] or ${flamingockVersion}"
+        "Recognizes Flamingock is already set up",
+        "Either redirects to flamingock-mongodb-sync-targetsystem or gives targetsystem-focused next steps that fit the current context",
+        "Does not restart full onboarding"
       ]
     },
     {
       "id": 3,
-      "name": "standalone-cloud-maven-dynamodb-explicit-version",
-      "prompt": "Onboard Flamingock in my standalone Java app. Runtime is standalone, language is Java, edition is Cloud, build tool is Maven, TargetSystem to use is dynamoTarget, apiToken is token-123, environment name is dev, service name is orders-api, changes package is com.acme.orders.changes, Flamingock version is 1.2.3, and I want @EnableFlamingock on a dedicated config class. Generate the setup.",
-      "expected_output": "Standalone Cloud setup for Maven with builder token/environment/service configuration, explicit Cloud placeholders or provided values, and no AuditStore wiring.",
-      "files": [],
+      "name": "onboarding-hand-off-to-change-skill",
+      "prompt": "My TargetSystem is already configured. I need a migration class for MongoDB now.",
+      "expected_output": "Either a hand-off to the MongoDB change skill or a helpful migration-oriented response that respects the already configured TargetSystem, without generating onboarding output.",
       "expectations": [
-        "The response includes BOM import and maven-compiler-plugin annotationProcessorPaths guidance for Flamingock with version 1.2.3",
-        "The response includes Flamingock.builder() with setApiToken(\"token-123\"), setEnvironment(\"dev\"), setService(\"orders-api\"), addTargetSystem(...), build(), and run()",
-        "The response does not create any AuditStore code or wiring",
-        "The response includes @EnableFlamingock with @Stage(location = \"com.acme.orders.changes\") on a dedicated config class (not the main class)",
-        "The response uses Java syntax (public class declaration or Java builder syntax)",
-        "The response does not contain [FLAMINGOCK_VERSION] or ${flamingockVersion}"
-      ]
-    },
-    {
-      "id": 4,
-      "name": "springboot-cloud-gradle-mongodb-explicit-version",
-      "prompt": "Onboard Flamingock in my Spring Boot app. Runtime is springboot, language is Java, edition is Cloud, build tool is Gradle, TargetSystem to use is mongoTargetSystem, apiToken is token-xyz, environment name is prod, service name is catalog-api, changes package is com.acme.catalog.changes, Flamingock version is 1.2.3, and I want @EnableFlamingock on a dedicated Flamingock configuration class. Generate the setup.",
-      "expected_output": "Spring Boot Cloud setup using Gradle, @EnableFlamingock on the chosen configuration class, application.yml cloud properties, and no AuditStore bean.",
-      "files": [],
-      "expectations": [
-        "The response includes the Flamingock Gradle plugin with version 1.2.3 and a flamingock block with springboot() and mongodb() — and community() is NOT present in the flamingock block",
-        "The response includes @EnableFlamingock with @Stage(location = \"com.acme.catalog.changes\") on the dedicated configuration class",
-        "The response includes application.yml entries for flamingock.apiToken, flamingock.environmentName, and flamingock.serviceName",
-        "The response does not create an AuditStore bean anywhere in the generated code",
-        "The response uses Java syntax (public class or @Configuration public class)",
-        "The response does not contain [FLAMINGOCK_VERSION] or ${flamingockVersion}"
-      ]
-    },
-    {
-      "id": 5,
-      "name": "community-no-targetsystem-generates-builder-setup-without-auditstore",
-      "prompt": "Onboard Flamingock in my standalone Java app. Runtime is standalone, language is Java, edition is Community, build tool is Gradle, TargetSystem to use is none yet, Community AuditStore backend is none yet, changes package is com.acme.edge.changes, and I want @EnableFlamingock on the main class. Generate the setup.",
-      "expected_output": "The skill generates Community onboarding without AuditStore because no AuditStore-capable TargetSystem exists yet, and explains that AuditStore wiring comes later.",
-      "files": [],
-      "expectations": [
-        "The response explains that Community AuditStore needs an AuditStore-capable TargetSystem and that it can be added later",
-        "The response emits Gradle setup code and activation code even though AuditStore is omitted",
-        "The response does not call setAuditStore(...)",
-        "The response does not call XxxAuditStore.from(...)",
-        "The response keeps the answer on the Java standalone path"
-      ]
-    },
-    {
-      "id": 6,
-      "name": "language-gating-missing-language-blocks-code",
-      "prompt": "Onboard Flamingock in my app. Runtime is standalone, edition is Community, build tool is Gradle, TargetSystem to use is mongoTarget, Community AuditStore backend is mongodb-sync, changes package is com.acme.demo.changes, and I want @EnableFlamingock on the main class. Generate the setup.",
-      "expected_output": "The skill refuses to emit setup code and asks specifically for the Language field (java or kotlin) without re-asking the already-provided routing fields.",
-      "files": [],
-      "expectations": [
-        "The response does not emit dependency snippets, builder code, bean code, or application.yml",
-        "The response asks specifically for Language using the exact field name 'Language' with options 'java' or 'kotlin'",
-        "The response does not re-ask for Runtime, Edition, Build tool, TargetSystem, AuditStore backend, changes package, or activation class — those were already provided",
-        "The response does not assume or default to Java"
-      ]
-    },
-    {
-      "id": 7,
-      "name": "kotlin-standalone-community-gradle-mongodb-explicit-version",
-      "prompt": "Onboard Flamingock in my standalone Kotlin app. Runtime is standalone, language is Kotlin, edition is Community, build tool is Gradle, TargetSystem to use is mongoTarget, Community AuditStore backend is mongodb-sync, changes package is com.acme.demo.changes, Flamingock version is 1.2.3, and I want @EnableFlamingock on the main class. Generate the setup.",
-      "expected_output": "Gradle plugin-based Community setup for standalone Kotlin, @EnableFlamingock with @Stage on the main class using Kotlin syntax, and builder guidance using MongoDBSyncAuditStore.from(mongoTarget) in Kotlin.",
-      "files": [],
-      "expectations": [
-        "The response includes the Flamingock Gradle plugin with version 1.2.3 and a flamingock block with community() and mongodb()",
-        "The response includes MongoDBSyncAuditStore.from(mongoTarget) in Kotlin style",
-        "The response includes @EnableFlamingock with stages = [Stage(location = \"com.acme.demo.changes\")] using Kotlin array literal syntax (square brackets, not curly braces)",
-        "The response includes fun main(args: Array<String>) — not public static void main",
-        "The response does not use new keyword anywhere in the generated Kotlin code",
-        "The response does not contain [FLAMINGOCK_VERSION] or ${flamingockVersion}"
-      ]
-    },
-    {
-      "id": 8,
-      "name": "kotlin-springboot-community-maven-sql-explicit-version",
-      "prompt": "Onboard Flamingock in my Spring Boot Kotlin service. Runtime is springboot, language is Kotlin, edition is Community, build tool is Maven, TargetSystem to use is sqlTargetSystem, Community AuditStore backend is sql/jdbc, changes package is com.acme.billing.changes, Flamingock version is 1.2.3, and I want @EnableFlamingock on the main application class. Generate the setup.",
-      "expected_output": "Maven Spring Boot Community Kotlin setup with kotlin-maven-plugin kapt for annotation processing, @EnableFlamingock on the application class using Kotlin syntax, an SqlAuditStore @Bean fun from an existing SqlTargetSystem bean, and application.yml management mode guidance.",
-      "files": [],
-      "expectations": [
-        "The response includes kotlin-maven-plugin with a kapt execution goal and flamingock-processor as an annotationProcessorPath using version 1.2.3",
-        "The response does not use maven-compiler-plugin annotationProcessorPaths for Kotlin annotation processing",
-        "The response includes SqlAuditStore.from(sqlTargetSystem) in the AuditStore bean",
-        "The response includes application.yml with flamingock.managementMode: INITIALIZING_BEAN",
-        "The response does not create a SqlTargetSystem bean in this onboarding step",
-        "The response uses Kotlin class or fun declarations, not Java public class declarations",
-        "The response does not contain [FLAMINGOCK_VERSION] or ${flamingockVersion}"
-      ]
-    },
-    {
-      "id": 9,
-      "name": "kotlin-springboot-cloud-gradle-mongodb-explicit-version",
-      "prompt": "Onboard Flamingock in my Spring Boot Kotlin app. Runtime is springboot, language is Kotlin, edition is Cloud, build tool is Gradle, TargetSystem to use is mongoTargetSystem, apiToken is token-xyz, environment name is prod, service name is catalog-api, changes package is com.acme.catalog.changes, Flamingock version is 1.2.3, and I want @EnableFlamingock on a dedicated Flamingock configuration class. Generate the setup.",
-      "expected_output": "Spring Boot Cloud setup using Gradle with Kotlin syntax, @EnableFlamingock on a Kotlin configuration class, application.yml cloud properties, and no AuditStore bean.",
-      "files": [],
-      "expectations": [
-        "The response includes the Flamingock Gradle plugin with version 1.2.3 and a flamingock block with springboot() and mongodb() — and community() is NOT present",
-        "The response includes @EnableFlamingock with stages = [Stage(location = \"com.acme.catalog.changes\")] using Kotlin array literal syntax on a Kotlin class",
-        "The response includes application.yml entries for flamingock.apiToken, flamingock.environmentName, and flamingock.serviceName",
-        "The response does not create an AuditStore bean anywhere",
-        "The response uses Kotlin config class syntax (for example class FlamingockConfiguration) — not Java public class syntax",
-        "The response does not use new keyword anywhere in the generated Kotlin code",
-        "The response does not contain [FLAMINGOCK_VERSION] or ${flamingockVersion}"
-      ]
-    },
-    {
-      "id": 10,
-      "name": "cloud-placeholders-do-not-block",
-      "prompt": "Onboard Flamingock in my Spring Boot Java app. Runtime is springboot, language is Java, edition is Cloud, build tool is Maven, TargetSystem to use is none yet, changes package is none yet, and I want @EnableFlamingock on a dedicated config class. I do not know the apiToken, environment name, service name, or Flamingock version yet. Generate the setup.",
-      "expected_output": "The skill generates Cloud onboarding, attempting to resolve the version using scripts first, and using placeholders for the missing Cloud values and version if resolution fails.",
-      "files": [],
-      "expectations": [
-        "The response includes BOM and compiler plugin guidance using either a resolved version (from scripts) or an explicit version placeholder like ${flamingockVersion} if resolution fails",
-        "The response includes explicit Cloud placeholders such as [FLAMINGOCK_API_TOKEN], [FLAMINGOCK_ENVIRONMENT], and [FLAMINGOCK_SERVICE]",
-        "The response includes @EnableFlamingock without any stages attribute",
-        "The response does not create an AuditStore bean",
-        "The response explains that the placeholders must be replaced later"
-      ]
-    },
-    {
-      "id": 11,
-      "name": "missing-changes-package-omits-stage",
-      "prompt": "Onboard Flamingock in my standalone Kotlin app. Runtime is standalone, language is Kotlin, edition is Community, build tool is Gradle, TargetSystem to use is none yet, Community AuditStore backend is none yet, Flamingock version is 1.2.3, changes package is none yet, and I want @EnableFlamingock on the main class. Generate the setup.",
-      "expected_output": "The skill generates onboarding without stages because no changes package exists yet, and without AuditStore because no TargetSystem exists yet.",
-      "files": [],
-      "expectations": [
-        "The response includes @EnableFlamingock without stages = [Stage(...)] or Java-style stages",
-        "The response does not emit @Stage(location = ...)",
-        "The response does not call setAuditStore(...) or XxxAuditStore.from(...)",
-        "The response still emits the Kotlin standalone onboarding path",
-        "The response explains that stages and AuditStore can be added later"
-      ]
-    },
-    {
-      "id": 12,
-      "name": "automated-version-resolution-no-input",
-      "prompt": "Onboard Flamingock in my Spring Boot Java app. Runtime is springboot, language is Java, edition is Community, build tool is Maven, TargetSystem to use is mongoTarget, Community AuditStore backend is mongodb-sync, changes package is com.acme.demo.changes, and I want @EnableFlamingock on the main class. I don't know the version.",
-      "expected_output": "The skill resolves the latest Flamingock version using the provided scripts and includes it in the Maven BOM and compiler plugin configuration.",
-      "files": [],
-      "expectations": [
-        "The response does not contain ${flamingockVersion} or [FLAMINGOCK_VERSION] if the script resolution was successful",
-        "The response includes a specific version number (e.g., 1.2.3) in the flamingock-bom and flamingock-processor path",
-        "The response confirms that the version was resolved automatically using scripts"
+        "Recognizes the TargetSystem is already configured",
+        "Either redirects to flamingock-mongodb-sync-change or gives migration-oriented help that fits the current context",
+        "Keeps the onboarding boundary explicit"
       ]
     }
   ]

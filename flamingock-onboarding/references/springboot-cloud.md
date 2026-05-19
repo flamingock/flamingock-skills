@@ -1,17 +1,17 @@
 ## Spring Boot + Cloud
 
-Use this reference after intake resolves to `springboot + cloud`.
+Use this reference when the request is about Spring Boot + Cloud onboarding, or when those defaults are the best immediate fit.
 
 ### Preconditions
 
-- `apiToken`, environment name, and service name may use explicit placeholders such as `[FLAMINGOCK_API_TOKEN]`, `[FLAMINGOCK_ENVIRONMENT]`, and `[FLAMINGOCK_SERVICE]` during onboarding if the real values are not known yet.
+- `apiToken`, `environment`, and `service` values may use `"TODO"` placeholders during onboarding if the real values are not known yet.
 - Do not create an AuditStore bean.
 
 ### Gradle
 
 ```kotlin
 plugins {
-    id("io.flamingock") version "[FLAMINGOCK_VERSION]"
+    id("io.flamingock") version "[VERSION]"
 }
 
 flamingock {
@@ -19,11 +19,11 @@ flamingock {
 }
 ```
 
-Replace `[FLAMINGOCK_VERSION]` with the resolved version, or keep the placeholder temporarily if the version could not be resolved yet.
+Replace `[VERSION]` with the resolved version, or keep the placeholder temporarily if the version could not be resolved yet.
 
 ### Maven
 
-Use the same structure as Spring Boot Community, but use the Cloud edition artifact explicitly. Keep `${flamingockVersion}` only when the exact version is still unresolved and call it out to the user:
+Use the same structure as Spring Boot Community, but use the Cloud edition artifact explicitly. Keep `[VERSION]` only when the exact version is still unresolved and call it out to the user:
 
 #### Java
 
@@ -33,7 +33,7 @@ Use the same structure as Spring Boot Community, but use the Cloud edition artif
     <dependency>
       <groupId>io.flamingock</groupId>
       <artifactId>flamingock-bom</artifactId>
-      <version>${flamingockVersion}</version>
+      <version>[VERSION]</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -61,7 +61,7 @@ Use the same structure as Spring Boot Community, but use the Cloud edition artif
           <path>
             <groupId>io.flamingock</groupId>
             <artifactId>flamingock-processor</artifactId>
-            <version>${flamingockVersion}</version>
+            <version>[VERSION]</version>
           </path>
         </annotationProcessorPaths>
       </configuration>
@@ -85,7 +85,7 @@ Use the same structure as Spring Boot Community, but use the Cloud edition artif
                     <annotationProcessorPath>
                         <groupId>io.flamingock</groupId>
                         <artifactId>flamingock-processor</artifactId>
-                        <version>${flamingockVersion}</version>
+                        <version>[VERSION]</version>
                     </annotationProcessorPath>
                 </annotationProcessorPaths>
             </configuration>
@@ -144,13 +144,13 @@ Place the annotation on the user-selected main class or dedicated config class.
 
 ```yaml
 flamingock:
-  apiToken: "[FLAMINGOCK_API_TOKEN]"
-  environmentName: "[FLAMINGOCK_ENVIRONMENT]"
-  serviceName: "[FLAMINGOCK_SERVICE]"
+  apiToken: "TODO"
+  environment: "TODO"
+  service: "TODO"
 ```
 
 ### No-AuditStore rule
 
 - Do not register an `AuditStore` bean.
 - Do not create `XxxAuditStore.from(...)`.
-- Keep the setup focused on Spring Boot integration, `@EnableFlamingock`, and Cloud properties.
+- Keep the setup focused on Spring Boot integration, `@EnableFlamingock`, and Cloud `apiToken` / `environment` / `service` properties.

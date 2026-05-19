@@ -1,6 +1,6 @@
 ## Spring Boot + Community
 
-Use this reference after intake resolves to `springboot + community`.
+Use this reference when the request is about Spring Boot + Community onboarding, or when those defaults are the best immediate fit.
 
 ### Preconditions
 
@@ -12,7 +12,7 @@ Use this reference after intake resolves to `springboot + community`.
 
 ```kotlin
 plugins {
-    id("io.flamingock") version "[FLAMINGOCK_VERSION]"
+    id("io.flamingock") version "[VERSION]"
 }
 
 flamingock {
@@ -23,11 +23,11 @@ flamingock {
 }
 ```
 
-Replace `[FLAMINGOCK_VERSION]` with the resolved version, or keep the placeholder temporarily if the version could not be resolved yet.
+Replace `[VERSION]` with the resolved version, or keep the placeholder temporarily if the version could not be resolved yet.
 
 ### Maven
 
-Keep `${flamingockVersion}` only when the exact version is still unresolved and call it out to the user:
+Keep `[VERSION]` only when the exact version is still unresolved and call it out to the user:
 
 #### Java
 
@@ -37,7 +37,7 @@ Keep `${flamingockVersion}` only when the exact version is still unresolved and 
     <dependency>
       <groupId>io.flamingock</groupId>
       <artifactId>flamingock-bom</artifactId>
-      <version>${flamingockVersion}</version>
+      <version>[VERSION]</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -65,7 +65,7 @@ Keep `${flamingockVersion}` only when the exact version is still unresolved and 
           <path>
             <groupId>io.flamingock</groupId>
             <artifactId>flamingock-processor</artifactId>
-            <version>${flamingockVersion}</version>
+            <version>[VERSION]</version>
           </path>
         </annotationProcessorPaths>
       </configuration>
@@ -89,7 +89,7 @@ Keep `${flamingockVersion}` only when the exact version is still unresolved and 
                     <annotationProcessorPath>
                         <groupId>io.flamingock</groupId>
                         <artifactId>flamingock-processor</artifactId>
-                        <version>${flamingockVersion}</version>
+                        <version>[VERSION]</version>
                     </annotationProcessorPath>
                 </annotationProcessorPaths>
             </configuration>

@@ -1,6 +1,6 @@
 ## Standalone + Community
 
-Use this reference after intake resolves to `standalone + community`.
+Use this reference when the request is about standalone + Community onboarding, or when those defaults are the best immediate fit.
 
 ### Preconditions
 
@@ -10,11 +10,11 @@ Use this reference after intake resolves to `standalone + community`.
 
 ### Gradle
 
-Use the Flamingock plugin so BOM, core, and annotation processor are handled by the plugin. Replace `[FLAMINGOCK_VERSION]` with the resolved version, or keep the placeholder temporarily if the version could not be resolved yet:
+Use the Flamingock plugin so BOM, core, and annotation processor are handled by the plugin. Replace `[VERSION]` with the resolved version, or keep the placeholder temporarily if the version could not be resolved yet:
 
 ```kotlin
 plugins {
-    id("io.flamingock") version "[FLAMINGOCK_VERSION]"
+    id("io.flamingock") version "[VERSION]"
 }
 
 flamingock {
@@ -26,7 +26,7 @@ flamingock {
 
 ### Maven
 
-Use BOM import, `flamingock-community`, and the annotation processor in `maven-compiler-plugin`. Keep `${flamingockVersion}` only when the exact version is still unresolved and call it out to the user:
+Use BOM import, `flamingock-community`, and the annotation processor in `maven-compiler-plugin`. Keep `[VERSION]` only when the exact version is still unresolved and call it out to the user:
 
 #### Java
 
@@ -36,7 +36,7 @@ Use BOM import, `flamingock-community`, and the annotation processor in `maven-c
     <dependency>
       <groupId>io.flamingock</groupId>
       <artifactId>flamingock-bom</artifactId>
-      <version>${flamingockVersion}</version>
+      <version>[VERSION]</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -59,7 +59,7 @@ Use BOM import, `flamingock-community`, and the annotation processor in `maven-c
           <path>
             <groupId>io.flamingock</groupId>
             <artifactId>flamingock-processor</artifactId>
-            <version>${flamingockVersion}</version>
+            <version>[VERSION]</version>
           </path>
         </annotationProcessorPaths>
       </configuration>
@@ -83,7 +83,7 @@ Use BOM import, `flamingock-community`, and the annotation processor in `maven-c
                     <annotationProcessorPath>
                         <groupId>io.flamingock</groupId>
                         <artifactId>flamingock-processor</artifactId>
-                        <version>${flamingockVersion}</version>
+                        <version>[VERSION]</version>
                     </annotationProcessorPath>
                 </annotationProcessorPaths>
             </configuration>

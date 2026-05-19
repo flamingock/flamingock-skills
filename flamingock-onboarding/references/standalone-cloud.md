@@ -1,19 +1,19 @@
 ## Standalone + Cloud
 
-Use this reference after intake resolves to `standalone + cloud`.
+Use this reference when the request is about standalone + Cloud onboarding, or when those defaults are the best immediate fit.
 
 ### Preconditions
 
-- `apiToken`, environment name, and service name may use explicit placeholders such as `[FLAMINGOCK_API_TOKEN]`, `[FLAMINGOCK_ENVIRONMENT]`, and `[FLAMINGOCK_SERVICE]` during onboarding if the real values are not known yet.
+- `apiToken`, `environment`, and `service` values may use `"TODO"` placeholders during onboarding if the real values are not known yet.
 - Do not create an AuditStore.
 
 ### Gradle
 
-Use the Flamingock plugin without `community()`. Replace `[FLAMINGOCK_VERSION]` with the resolved version, or keep the placeholder temporarily if the version could not be resolved yet:
+Use the Flamingock plugin without `community()`. Replace `[VERSION]` with the resolved version, or keep the placeholder temporarily if the version could not be resolved yet:
 
 ```kotlin
 plugins {
-    id("io.flamingock") version "[FLAMINGOCK_VERSION]"
+    id("io.flamingock") version "[VERSION]"
 }
 
 flamingock {
@@ -23,7 +23,7 @@ flamingock {
 
 ### Maven
 
-Use the same BOM import and compiler plugin pattern as Community, but use the Cloud edition artifact explicitly. Keep `${flamingockVersion}` only when the exact version is still unresolved and call it out to the user:
+Use the same BOM import and compiler plugin pattern as Community, but use the Cloud edition artifact explicitly. Keep `[VERSION]` only when the exact version is still unresolved and call it out to the user:
 
 #### Java
 
@@ -33,7 +33,7 @@ Use the same BOM import and compiler plugin pattern as Community, but use the Cl
     <dependency>
       <groupId>io.flamingock</groupId>
       <artifactId>flamingock-bom</artifactId>
-      <version>${flamingockVersion}</version>
+      <version>[VERSION]</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -56,7 +56,7 @@ Use the same BOM import and compiler plugin pattern as Community, but use the Cl
           <path>
             <groupId>io.flamingock</groupId>
             <artifactId>flamingock-processor</artifactId>
-            <version>${flamingockVersion}</version>
+            <version>[VERSION]</version>
           </path>
         </annotationProcessorPaths>
       </configuration>
@@ -80,7 +80,7 @@ Use the same BOM import and compiler plugin pattern as Community, but use the Cl
                     <annotationProcessorPath>
                         <groupId>io.flamingock</groupId>
                         <artifactId>flamingock-processor</artifactId>
-                        <version>${flamingockVersion}</version>
+                        <version>[VERSION]</version>
                     </annotationProcessorPath>
                 </annotationProcessorPaths>
             </configuration>
@@ -95,9 +95,9 @@ Use the same BOM import and compiler plugin pattern as Community, but use the Cl
 
 ```java
 Flamingock.builder()
-    .setApiToken("[FLAMINGOCK_API_TOKEN]")
-    .setEnvironment("[FLAMINGOCK_ENVIRONMENT]")
-    .setService("[FLAMINGOCK_SERVICE]")
+    .setApiToken("TODO")
+    .setEnvironment("TODO")
+    .setService("TODO")
     .build()
     .run();
 ```
@@ -106,9 +106,9 @@ Flamingock.builder()
 
 ```kotlin
 Flamingock.builder()
-    .setApiToken("[FLAMINGOCK_API_TOKEN]")
-    .setEnvironment("[FLAMINGOCK_ENVIRONMENT]")
-    .setService("[FLAMINGOCK_SERVICE]")
+    .setApiToken("TODO")
+    .setEnvironment("TODO")
+    .setService("TODO")
     .build()
     .run()
 ```
