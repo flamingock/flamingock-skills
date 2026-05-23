@@ -12,19 +12,21 @@ Use this reference when the request is clearly about standalone wiring for `Mong
 
 #### Gradle
 
-If the project uses the Flamingock Gradle plugin, make sure the Flamingock block includes the MongoDB module:
+If the project uses the Flamingock Gradle plugin, make sure the Flamingock block includes the MongoDB module. In this plugin-first path, do not add Flamingock artifacts again in `dependencies { ... }`:
 
 ```kotlin
 flamingock {
     mongodb()
 }
-
-dependencies {
-    implementation("io.flamingock:flamingock-mongodb-sync-targetsystem")
-}
 ```
 
-Add `org.mongodb:mongodb-driver-sync` only when you are also creating the `MongoClient` in this setup path.
+Add `org.mongodb:mongodb-driver-sync` only when you are also creating the `MongoClient` in this setup path:
+
+```kotlin
+dependencies {
+    implementation("org.mongodb:mongodb-driver-sync:[VERSION]")
+}
+```
 
 #### Maven
 

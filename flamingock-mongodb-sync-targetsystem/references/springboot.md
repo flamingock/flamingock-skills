@@ -12,21 +12,22 @@ Use this reference when the request is clearly about Spring Boot wiring for `Mon
 
 #### Gradle
 
-If the project uses the Flamingock Gradle plugin, make sure Spring Boot and MongoDB modules are enabled:
+If the project uses the Flamingock Gradle plugin, make sure Spring Boot and MongoDB modules are enabled. In this plugin-first path, do not add Flamingock artifacts again in `dependencies { ... }`:
 
 ```kotlin
 flamingock {
     springboot()
     mongodb()
 }
-
-dependencies {
-    implementation("io.flamingock:flamingock-springboot-integration")
-    implementation("io.flamingock:flamingock-mongodb-sync-targetsystem")
-}
 ```
 
-Add `org.mongodb:mongodb-driver-sync` only when you are also creating the `MongoClient` in this setup path.
+Add `org.mongodb:mongodb-driver-sync` only when you are also creating the `MongoClient` in this setup path:
+
+```kotlin
+dependencies {
+    implementation("org.mongodb:mongodb-driver-sync:[VERSION]")
+}
+```
 
 #### Maven
 

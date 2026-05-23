@@ -31,8 +31,8 @@ For the most up-to-date syntax, features, and best practices, always consult the
   - Java: `new MongoDBSyncTargetSystem(id, mongoClient, databaseName)`
   - Kotlin: `MongoDBSyncTargetSystem(id, mongoClient, databaseName)`
 - **Dependencies**: 
-  - For Spring Boot: Include `io.flamingock:flamingock-springboot-integration` and `io.flamingock:flamingock-mongodb-sync-targetsystem`.
-  - For Standalone: Include `io.flamingock:flamingock-mongodb-sync-targetsystem`.
+  - For Gradle plugin-first setups: enable `mongodb()` and, if needed, `springboot()` in `flamingock { ... }`; do not add Flamingock artifacts again in the same `dependencies { ... }` block.
+  - For Maven/manual setups: include `io.flamingock:flamingock-mongodb-sync-targetsystem` and, for Spring Boot, `io.flamingock:flamingock-springboot-integration` explicitly.
   - Only add `org.mongodb:mongodb-driver-sync` if the skill is also creating the `MongoClient`.
 
 ### 2. MongoClient Handling
