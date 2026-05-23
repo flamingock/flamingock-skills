@@ -1,0 +1,64 @@
+{
+  "skill_name": "flamingock-non-transactional-change",
+  "evals": [
+    {
+      "id": 0,
+      "name": "java-compensation-placeholders",
+      "prompt": "I need a Java Flamingock change to tag an S3 bucket. I don't have the order or author yet.",
+      "expected_output": "A Java non-transactional change using placeholders for order and author, with compensation-oriented rollback guidance.",
+      "expectations": [
+        "Filename starts with _ORDER__",
+        "Author is TODO",
+        "Uses @TargetSystem(id = \"YOUR_TARGET_SYSTEM_ID\")",
+        "Uses @Apply and @Rollback",
+        "Uses @Change(..., transactional = false)",
+        "Does not inject transactional database/session contexts"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "kotlin-idempotent-recovery",
+      "prompt": "Create a Kotlin change to register an idempotent remote setting in a non-transactional target system.",
+      "expected_output": "A Kotlin non-transactional change that considers ALWAYS_RETRY only if the operation is truly idempotent.",
+      "expectations": [
+        "Language is Kotlin",
+        "Uses @Change(..., transactional = false)",
+        "Explains or uses recovery strategy based on idempotency",
+        "Uses @Apply and @Rollback"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "java-named-dependency-semantics",
+      "prompt": "Create a Java change that uses two named notification clients from a NonTransactionalTargetSystem.",
+      "expected_output": "A Java change that uses named dependency injection instead of inventing new clients.",
+      "expectations": [
+        "Uses @Named on dependencies when appropriate",
+        "Uses registered dependency semantics",
+        "Transactional is false"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "dangerous-rollback-pushback",
+      "prompt": "Create one change that recreates a remote topic and on rollback deletes every topic with the same prefix.",
+      "expected_output": "A refusal to use an over-broad rollback and a narrower compensation plan.",
+      "expectations": [
+        "Rejects destructive broad rollback",
+        "Explains why compensation must be narrow",
+        "Proposes a safer rollback strategy"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "redirect-to-targetsystem-when-config-missing",
+      "prompt": "Write a non-transactional Flamingock change for my S3 bucket, but I still haven't configured the target system yet.",
+      "expected_output": "A redirection to the non-transactional TargetSystem skill instead of generating the change immediately.",
+      "expectations": [
+        "Recognizes that the TargetSystem setup is missing",
+        "Redirects to flamingock-non-transactional-targetsystem",
+        "Does not generate the migration class immediately"
+      ]
+    }
+  ]
+}

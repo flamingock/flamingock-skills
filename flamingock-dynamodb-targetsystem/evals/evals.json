@@ -1,0 +1,65 @@
+{
+  "skill_name": "flamingock-dynamodb-targetsystem",
+  "evals": [
+    {
+      "id": 0,
+      "name": "springboot-java-maven-happy-path",
+      "prompt": "Setup DynamoDBTargetSystem for my Spring Boot Java app using Maven.",
+      "expected_output": "A complete Spring Boot @Bean configuration for DynamoDBTargetSystem with Maven dependencies and canonical placeholders.",
+      "expectations": [
+        "Uses @Bean public DynamoDBTargetSystem",
+        "Includes flamingock-springboot-integration and flamingock-dynamodb-targetsystem",
+        "Includes AWS DynamoDB SDK dependency",
+        "Uses YOUR_TARGET_SYSTEM_ID and TODO placeholders",
+        "Language is Java"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "standalone-kotlin-gradle-new-client",
+      "prompt": "I need to configure Flamingock for a standalone Kotlin project with Gradle. I don't have a DynamoDbClient yet.",
+      "expected_output": "A Kotlin snippet creating both a DynamoDbClient and the DynamoDBTargetSystem, plus Gradle plugin configuration.",
+      "expectations": [
+        "Language is Kotlin",
+        "Creates a DynamoDbClient using its builder",
+        "Uses TODO for unresolved region values",
+        "Configures the flamingock plugin with dynamodb() module",
+        "Uses placeholders for operational values"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "springboot-java-existing-client-reuse",
+      "prompt": "Flamingock is already in my Spring Boot app and I already have a DynamoDbClient bean. Wire DynamoDBTargetSystem without creating another client.",
+      "expected_output": "A Spring Boot DynamoDBTargetSystem bean that reuses the existing DynamoDbClient bean and does not generate a duplicate client.",
+      "expectations": [
+        "Reuses the existing DynamoDbClient bean",
+        "Does not create a second DynamoDbClient bean",
+        "Uses YOUR_TARGET_SYSTEM_ID placeholder",
+        "Stays in the targetsystem skill boundary"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "standalone-java-multiple-client-ambiguity",
+      "prompt": "I have two DynamoDbClient variables in my standalone Java app. Help me wire DynamoDBTargetSystem.",
+      "expected_output": "A response that flags the multiple-client ambiguity, asks for the intended client or shows how to choose one explicitly, without inventing a selection.",
+      "expectations": [
+        "Acknowledges multiple DynamoDbClient candidates",
+        "Does not silently choose one client",
+        "Keeps the answer focused on DynamoDBTargetSystem wiring"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "targetsystem-hand-off-to-change-skill",
+      "prompt": "My DynamoDBTargetSystem is already configured. Now create a migration to add a table.",
+      "expected_output": "Either a hand-off to the DynamoDB change skill or migration-oriented help that assumes the TargetSystem is already configured and does not pretend onboarding is needed.",
+      "expectations": [
+        "Either redirects to flamingock-dynamodb-change or gives migration-oriented help for the requested change",
+        "Does not pretend onboarding or targetsystem setup is still needed",
+        "Keeps the response focused on migration authoring rather than redoing targetsystem wiring"
+      ]
+    }
+  ]
+}

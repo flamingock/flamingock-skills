@@ -1,0 +1,65 @@
+{
+  "skill_name": "flamingock-couchbase-change",
+  "evals": [
+    {
+      "id": 0,
+      "name": "java-document-placeholders",
+      "prompt": "I need a Java Couchbase change to seed initial config documents. I don't have the order or author yet.",
+      "expected_output": "A Java document change using placeholders for order and author, correctly injecting the Couchbase transaction context.",
+      "expectations": [
+        "Filename starts with _ORDER__",
+        "Author is TODO",
+        "Uses @TargetSystem(id = \"YOUR_TARGET_SYSTEM_ID\")",
+        "Uses @Apply and @Rollback",
+        "Injects Cluster, Bucket, and TransactionAttemptContext",
+        "Does not use unrelated document-database session types"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "kotlin-ddl-create-collection-idempotent",
+      "prompt": "Create a Kotlin Couchbase schema change to create a collection audits.",
+      "expected_output": "A Kotlin non-transactional schema change with an idempotency guard around collection creation.",
+      "expectations": [
+        "Language is Kotlin",
+        "Uses @Change(..., transactional = false)",
+        "Uses @TargetSystem(id = \"YOUR_TARGET_SYSTEM_ID\")",
+        "Catches CollectionExistsException or equivalent",
+        "Uses @Apply and @Rollback"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "java-transaction-context-semantics",
+      "prompt": "Create a Couchbase change in Java to insert one configuration document transactionally.",
+      "expected_output": "A Java document change where document operations use TransactionAttemptContext.",
+      "expectations": [
+        "Injects TransactionAttemptContext",
+        "Uses Couchbase transaction semantics",
+        "Transactional is true (default)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "mixed-ddl-dml-refusal",
+      "prompt": "Create one Java Flamingock Couchbase change that creates a logs collection and inserts a START document into it.",
+      "expected_output": "A refusal to mix schema and document work in one Couchbase change, with a split into two changes.",
+      "expectations": [
+        "Refuses a single mixed DDL/DML class",
+        "Explains that schema work is non-transactional and document work uses TransactionAttemptContext",
+        "Proposes separate changes"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "redirect-to-targetsystem-when-config-missing",
+      "prompt": "Write a Couchbase Flamingock change for my orders collection, but I still haven't configured the Couchbase TargetSystem yet.",
+      "expected_output": "A redirection to the Couchbase TargetSystem skill instead of generating the change immediately.",
+      "expectations": [
+        "Recognizes that the TargetSystem setup is missing",
+        "Redirects to flamingock-couchbase-targetsystem",
+        "Does not generate the migration class immediately"
+      ]
+    }
+  ]
+}

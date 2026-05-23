@@ -1,0 +1,65 @@
+{
+  "skill_name": "flamingock-dynamodb-change",
+  "evals": [
+    {
+      "id": 0,
+      "name": "java-write-placeholders",
+      "prompt": "I need a Java DynamoDB change to seed initial products. I don't have the order or author yet.",
+      "expected_output": "A Java write change using placeholders for order and author, correctly injecting the transactional DynamoDB builder.",
+      "expectations": [
+        "Filename starts with _ORDER__",
+        "Author is TODO",
+        "Uses @TargetSystem(id = \"YOUR_TARGET_SYSTEM_ID\")",
+        "Uses @Apply and @Rollback",
+        "Injects DynamoDbClient and TransactWriteItemsEnhancedRequest.Builder",
+        "Does not use unrelated document-database session types"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "kotlin-ddl-create-table-idempotent",
+      "prompt": "Create a Kotlin DynamoDB table-management change to create a table audits.",
+      "expected_output": "A Kotlin non-transactional change with an idempotency guard around table creation.",
+      "expectations": [
+        "Language is Kotlin",
+        "Uses @Change(..., transactional = false)",
+        "Uses @TargetSystem(id = \"YOUR_TARGET_SYSTEM_ID\")",
+        "Catches ResourceInUseException or equivalent",
+        "Uses @Apply and @Rollback"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "java-transactional-builder-semantics",
+      "prompt": "Create a DynamoDB change in Java to insert one configuration record transactionally.",
+      "expected_output": "A Java write change where the write is added to TransactWriteItemsEnhancedRequest.Builder.",
+      "expectations": [
+        "Injects TransactWriteItemsEnhancedRequest.Builder",
+        "Uses DynamoDB transaction builder semantics",
+        "Transactional is true (default)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "mixed-ddl-dml-refusal",
+      "prompt": "Create one Java Flamingock DynamoDB change that creates a logs table and inserts a START row into it.",
+      "expected_output": "A refusal to mix table management and write work in one DynamoDB change, with a split into two changes.",
+      "expectations": [
+        "Refuses a single mixed DDL/DML class",
+        "Explains that table changes are non-transactional and writes use the transactional builder",
+        "Proposes separate changes"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "redirect-to-targetsystem-when-config-missing",
+      "prompt": "Write a DynamoDB Flamingock change for my orders table, but I still haven't configured the DynamoDB TargetSystem yet.",
+      "expected_output": "A redirection to the DynamoDB TargetSystem skill instead of generating the change immediately.",
+      "expectations": [
+        "Recognizes that the TargetSystem setup is missing",
+        "Redirects to flamingock-dynamodb-targetsystem",
+        "Does not generate the migration class immediately"
+      ]
+    }
+  ]
+}

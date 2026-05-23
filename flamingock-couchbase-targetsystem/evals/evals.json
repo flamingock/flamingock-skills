@@ -1,0 +1,65 @@
+{
+  "skill_name": "flamingock-couchbase-targetsystem",
+  "evals": [
+    {
+      "id": 0,
+      "name": "springboot-java-maven-happy-path",
+      "prompt": "Setup CouchbaseTargetSystem for my Spring Boot Java app using Maven.",
+      "expected_output": "A complete Spring Boot @Bean configuration for CouchbaseTargetSystem with Maven dependencies and canonical placeholders.",
+      "expectations": [
+        "Uses @Bean public CouchbaseTargetSystem",
+        "Includes flamingock-springboot-integration and flamingock-couchbase-targetsystem",
+        "Includes Couchbase SDK dependency",
+        "Uses YOUR_TARGET_SYSTEM_ID and TODO placeholders",
+        "Language is Java"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "standalone-kotlin-gradle-new-cluster",
+      "prompt": "I need to configure Flamingock for a standalone Kotlin project with Gradle. I don't have a Couchbase Cluster yet.",
+      "expected_output": "A Kotlin snippet creating both a Cluster and the CouchbaseTargetSystem, plus Gradle plugin configuration.",
+      "expectations": [
+        "Language is Kotlin",
+        "Creates a Cluster using Cluster.connect",
+        "Uses TODO for unresolved connection and bucket values",
+        "Configures the flamingock plugin with couchbase() module",
+        "Uses placeholders for operational values"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "springboot-java-existing-cluster-reuse",
+      "prompt": "Flamingock is already in my Spring Boot app and I already have a Cluster bean. Wire CouchbaseTargetSystem without creating another cluster.",
+      "expected_output": "A Spring Boot CouchbaseTargetSystem bean that reuses the existing Cluster bean and does not generate a duplicate cluster.",
+      "expectations": [
+        "Reuses the existing Cluster bean",
+        "Does not create a second Cluster bean",
+        "Uses YOUR_TARGET_SYSTEM_ID placeholder",
+        "Stays in the targetsystem skill boundary"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "standalone-java-multiple-cluster-ambiguity",
+      "prompt": "I have two Cluster variables in my standalone Java app. Help me wire CouchbaseTargetSystem.",
+      "expected_output": "A response that flags the multiple-cluster ambiguity, asks for the intended cluster or shows how to choose one explicitly, without inventing a selection.",
+      "expectations": [
+        "Acknowledges multiple Cluster candidates",
+        "Does not silently choose one cluster",
+        "Keeps the answer focused on CouchbaseTargetSystem wiring"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "targetsystem-hand-off-to-change-skill",
+      "prompt": "My CouchbaseTargetSystem is already configured. Now create a migration to add a collection.",
+      "expected_output": "Either a hand-off to the Couchbase change skill or migration-oriented help that assumes the TargetSystem is already configured and does not pretend onboarding is needed.",
+      "expectations": [
+        "Either redirects to flamingock-couchbase-change or gives migration-oriented help for the requested change",
+        "Does not pretend onboarding or targetsystem setup is still needed",
+        "Keeps the response focused on migration authoring rather than redoing targetsystem wiring"
+      ]
+    }
+  ]
+}

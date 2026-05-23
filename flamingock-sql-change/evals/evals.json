@@ -1,0 +1,65 @@
+{
+  "skill_name": "flamingock-sql-change",
+  "evals": [
+    {
+      "id": 0,
+      "name": "java-dml-backfill-placeholders",
+      "prompt": "I need a Java SQL change to update all users and set active to true. I don't have the order or author yet.",
+      "expected_output": "A Java DML class using placeholders for order and author, correctly injecting Connection.",
+      "expectations": [
+        "Filename starts with _ORDER__",
+        "Author is TODO",
+        "Uses @TargetSystem(id = \"YOUR_TARGET_SYSTEM_ID\")",
+        "Uses @Apply and @Rollback",
+        "Injects Connection",
+        "Uses SQL DML statements"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "kotlin-ddl-create-table-idempotent",
+      "prompt": "Create a Kotlin SQL DDL change to create a table audits.",
+      "expected_output": "A Kotlin DDL class with transactional=false and an idempotency check.",
+      "expectations": [
+        "Language is Kotlin",
+        "Uses @Change(..., transactional = false)",
+        "Uses @TargetSystem(id = \"YOUR_TARGET_SYSTEM_ID\")",
+        "Uses IF NOT EXISTS or equivalent idempotent DDL",
+        "Uses @Apply and @Rollback"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "java-dml-jdbc-semantics",
+      "prompt": "Create a DML change in Java to delete inactive users in PostgreSQL.",
+      "expected_output": "A Java DML class where delete operations are expressed with JDBC Connection or DataSource semantics.",
+      "expectations": [
+        "Injects Connection or DataSource",
+        "Does not mention unrelated document-database session APIs",
+        "Transactional is true (default)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "mixed-ddl-dml-refusal",
+      "prompt": "Create one Java Flamingock change that adds a logs table and inserts a START row into it.",
+      "expected_output": "A refusal to mix DDL and DML in one SQL change, with a split into two changes.",
+      "expectations": [
+        "Refuses a single mixed DDL/DML class",
+        "Explains that DDL and DML should be separated",
+        "Proposes separate DDL and DML changes"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "redirect-to-targetsystem-when-config-missing",
+      "prompt": "Write a SQL Flamingock change for my users table, but I still haven't configured the SQL TargetSystem yet.",
+      "expected_output": "A redirection to the SQL TargetSystem skill instead of generating the change immediately.",
+      "expectations": [
+        "Recognizes that the TargetSystem setup is missing",
+        "Redirects to flamingock-sql-targetsystem",
+        "Does not generate the migration class immediately"
+      ]
+    }
+  ]
+}

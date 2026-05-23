@@ -1,0 +1,64 @@
+{
+  "skill_name": "flamingock-non-transactional-targetsystem",
+  "evals": [
+    {
+      "id": 0,
+      "name": "springboot-java-s3-happy-path",
+      "prompt": "Setup NonTransactionalTargetSystem for my Spring Boot Java app to manage AWS S3 changes using Maven.",
+      "expected_output": "A Spring Boot bean wiring a NonTransactionalTargetSystem with S3 dependencies and named properties.",
+      "expectations": [
+        "Uses @Bean public NonTransactionalTargetSystem",
+        "Includes flamingock-community and an external SDK dependency",
+        "Uses addDependency and/or setProperty",
+        "Warns that this target system cannot back the AuditStore",
+        "Language is Java"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "standalone-kotlin-gradle-with-properties",
+      "prompt": "I need to configure Flamingock for a standalone Kotlin project with Gradle to manage Kafka Schema Registry. Show how to register the client and compatibility level.",
+      "expected_output": "A Kotlin snippet creating a NonTransactionalTargetSystem with addDependency and setProperty calls, plus Gradle configuration.",
+      "expectations": [
+        "Language is Kotlin",
+        "Uses addDependency and setProperty",
+        "Configures community() instead of a technology-specific Flamingock module",
+        "Does not claim transactional support"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "existing-client-reuse",
+      "prompt": "Flamingock is already in my Spring Boot app and I already have an S3Client bean. Wire NonTransactionalTargetSystem without creating another client.",
+      "expected_output": "A Spring Boot NonTransactionalTargetSystem bean that reuses the existing client bean.",
+      "expectations": [
+        "Reuses the existing client bean",
+        "Does not create a second client bean",
+        "Uses YOUR_TARGET_SYSTEM_ID placeholder",
+        "Stays in the targetsystem skill boundary"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "multiple-dependency-ambiguity",
+      "prompt": "I have two KafkaTemplate beans in my Spring Boot app. Help me wire a NonTransactionalTargetSystem for notifications.",
+      "expected_output": "A response that flags the multiple-dependency ambiguity and shows how to register them by name instead of inventing a selection.",
+      "expectations": [
+        "Acknowledges multiple dependency candidates",
+        "Suggests named dependency registration",
+        "Keeps the answer focused on NonTransactionalTargetSystem wiring"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "targetsystem-hand-off-to-change-skill",
+      "prompt": "My NonTransactionalTargetSystem is already configured. Now create a migration to tag an S3 bucket.",
+      "expected_output": "Either a hand-off to the non-transactional change skill or migration-oriented help that assumes the TargetSystem is already configured.",
+      "expectations": [
+        "Either redirects to flamingock-non-transactional-change or gives migration-oriented help",
+        "Does not pretend onboarding or targetsystem setup is still needed",
+        "Keeps the response focused on migration authoring rather than redoing targetsystem wiring"
+      ]
+    }
+  ]
+}

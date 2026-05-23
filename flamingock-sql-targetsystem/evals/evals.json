@@ -1,0 +1,65 @@
+{
+  "skill_name": "flamingock-sql-targetsystem",
+  "evals": [
+    {
+      "id": 0,
+      "name": "springboot-java-maven-happy-path",
+      "prompt": "Setup SqlTargetSystem for my Spring Boot Java app using Maven and PostgreSQL.",
+      "expected_output": "A complete Spring Boot @Bean configuration for SqlTargetSystem with Maven dependencies and canonical placeholders.",
+      "expectations": [
+        "Uses @Bean public SqlTargetSystem",
+        "Includes flamingock-springboot-integration and flamingock-sql-targetsystem",
+        "Includes a JDBC driver dependency",
+        "Uses YOUR_TARGET_SYSTEM_ID and TODO placeholders",
+        "Language is Java"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "standalone-kotlin-gradle-new-datasource",
+      "prompt": "I need to configure Flamingock for a standalone Kotlin project with Gradle and PostgreSQL. I don't have a DataSource yet.",
+      "expected_output": "A Kotlin snippet creating both a DataSource and the SqlTargetSystem, plus Gradle plugin configuration.",
+      "expectations": [
+        "Language is Kotlin",
+        "Creates a DataSource",
+        "Uses TODO for unresolved connection values",
+        "Configures the flamingock plugin with sql() module",
+        "Uses placeholders for operational values"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "springboot-java-existing-datasource-reuse",
+      "prompt": "Flamingock is already in my Spring Boot app and I already have a DataSource bean. Wire SqlTargetSystem without creating another datasource.",
+      "expected_output": "A Spring Boot SqlTargetSystem bean that reuses the existing DataSource bean and does not generate a duplicate datasource.",
+      "expectations": [
+        "Reuses the existing DataSource bean",
+        "Does not create a second DataSource bean",
+        "Uses YOUR_TARGET_SYSTEM_ID placeholder",
+        "Stays in the targetsystem skill boundary"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "standalone-java-multiple-datasource-ambiguity",
+      "prompt": "I have two DataSource variables in my standalone Java app. Help me wire SqlTargetSystem.",
+      "expected_output": "A response that flags the multiple-datasource ambiguity, asks for the intended datasource or shows how to choose one explicitly, without inventing a selection.",
+      "expectations": [
+        "Acknowledges multiple DataSource candidates",
+        "Does not silently choose one datasource",
+        "Keeps the answer focused on SqlTargetSystem wiring"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "targetsystem-hand-off-to-change-skill",
+      "prompt": "My SqlTargetSystem is already configured. Now create a migration to add an index to users.",
+      "expected_output": "Either a hand-off to the SQL change skill or migration-oriented help that assumes the TargetSystem is already configured and does not pretend onboarding is needed.",
+      "expectations": [
+        "Either redirects to flamingock-sql-change or gives migration-oriented help for the requested change",
+        "Does not pretend onboarding or targetsystem setup is still needed",
+        "Keeps the response focused on migration authoring rather than redoing targetsystem wiring"
+      ]
+    }
+  ]
+}

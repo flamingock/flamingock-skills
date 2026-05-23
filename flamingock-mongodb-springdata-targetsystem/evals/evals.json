@@ -1,0 +1,63 @@
+{
+  "skill_name": "flamingock-mongodb-springdata-targetsystem",
+  "evals": [
+    {
+      "id": 0,
+      "name": "springboot-java-maven-happy-path",
+      "prompt": "Setup MongoDBSpringDataTargetSystem for my Spring Boot Java app using Maven.",
+      "expected_output": "A complete Spring Boot @Bean configuration for MongoDBSpringDataTargetSystem with Maven dependencies and canonical placeholders.",
+      "expectations": [
+        "Uses @Bean public MongoDBSpringDataTargetSystem",
+        "Includes flamingock-springboot-integration and flamingock-mongodb-springdata-targetsystem",
+        "Includes spring-boot-starter-data-mongodb",
+        "Uses YOUR_TARGET_SYSTEM_ID placeholder",
+        "Language is Java"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "springboot-kotlin-gradle-existing-template",
+      "prompt": "I need to configure Flamingock for a Spring Boot Kotlin project with Gradle. I already have a MongoTemplate bean.",
+      "expected_output": "A Kotlin snippet creating the MongoDBSpringDataTargetSystem from the existing MongoTemplate, plus Gradle plugin configuration.",
+      "expectations": [
+        "Language is Kotlin",
+        "Reuses an existing MongoTemplate bean",
+        "Configures the flamingock plugin with springboot() and mongodb() modules",
+        "Does not create raw sync-driver wiring"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "springboot-java-autoconfig-template",
+      "prompt": "My Spring Boot app already uses spring-boot-starter-data-mongodb but I do not declare a MongoTemplate bean manually. Wire MongoDBSpringDataTargetSystem.",
+      "expected_output": "A Spring Boot MongoDBSpringDataTargetSystem bean that relies on the existing MongoTemplate/autoconfiguration instead of inventing low-level wiring.",
+      "expectations": [
+        "Uses MongoTemplate in the target-system bean",
+        "Does not create a raw MongoClient",
+        "Keeps the answer inside the Spring Data targetsystem boundary"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "springboot-java-multiple-template-ambiguity",
+      "prompt": "I have two MongoTemplate beans in my Spring Boot Java app. Help me wire MongoDBSpringDataTargetSystem.",
+      "expected_output": "A response that flags the multiple-bean ambiguity, asks for the intended bean or shows how to qualify one explicitly, without inventing a selection.",
+      "expectations": [
+        "Acknowledges multiple MongoTemplate candidates",
+        "Does not silently choose one bean",
+        "Keeps the answer focused on MongoDBSpringDataTargetSystem wiring"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "targetsystem-hand-off-to-change-skill",
+      "prompt": "My MongoDBSpringDataTargetSystem is already configured. Now create a migration to add an index to users.",
+      "expected_output": "Either a hand-off to the MongoDB Spring Data change skill or migration-oriented help that assumes the TargetSystem is already configured and does not pretend onboarding is needed.",
+      "expectations": [
+        "Either redirects to flamingock-mongodb-springdata-change or gives migration-oriented help for the requested change",
+        "Does not pretend onboarding or targetsystem setup is still needed",
+        "Keeps the response focused on migration authoring rather than redoing targetsystem wiring"
+      ]
+    }
+  ]
+}

@@ -9,6 +9,16 @@ A collection of AI agent skills for the [Flamingock](https://flamingock.io) ecos
 | [`flamingock-onboarding`](./flamingock-onboarding/) | Configure Flamingock's entry point in a project — standalone Java or Spring Boot, Community or Cloud edition — adding the correct dependencies and writing the initialization code |
 | [`flamingock-mongodb-sync-targetsystem`](./flamingock-mongodb-sync-targetsystem/) | Configure `MongoDBSyncTargetSystem` for standalone or Spring Boot Java/Kotlin projects using the MongoDB sync driver, with language-gated single-path output and TargetSystem-only scope |
 | [`flamingock-mongodb-sync-change`](./flamingock-mongodb-sync-change/) | Create or review Java/Kotlin `@Change` classes for `MongoDBSyncTargetSystem`, with explicit language gating, strict registration verification, DML-vs-DDL routing, rollback-safe guidance, and hard redirects for setup or Spring Data concerns |
+| [`flamingock-mongodb-springdata-targetsystem`](./flamingock-mongodb-springdata-targetsystem/) | Configure `MongoDBSpringDataTargetSystem` for Spring Boot projects using `MongoTemplate`, Spring Data MongoDB, and bean registration |
+| [`flamingock-mongodb-springdata-change`](./flamingock-mongodb-springdata-change/) | Create or review `@Change` classes for `MongoDBSpringDataTargetSystem`, covering Spring Data MongoDB migrations, backfills, data fixes, and DML-vs-DDL routing |
+| [`flamingock-sql-targetsystem`](./flamingock-sql-targetsystem/) | Configure `SqlTargetSystem` for relational databases, including JDBC driver guidance and bean or builder registration |
+| [`flamingock-sql-change`](./flamingock-sql-change/) | Create or review `@Change` classes for `SqlTargetSystem`, covering schema changes, backfills, data fixes, and strict DML-vs-DDL separation |
+| [`flamingock-dynamodb-targetsystem`](./flamingock-dynamodb-targetsystem/) | Configure `DynamoDBTargetSystem`, including AWS SDK guidance and bean or builder registration |
+| [`flamingock-dynamodb-change`](./flamingock-dynamodb-change/) | Create or review `@Change` classes for `DynamoDBTargetSystem`, covering table management, transactional writes, backfills, and schema-vs-write separation |
+| [`flamingock-couchbase-targetsystem`](./flamingock-couchbase-targetsystem/) | Configure `CouchbaseTargetSystem`, including Couchbase SDK guidance and bean or builder registration |
+| [`flamingock-couchbase-change`](./flamingock-couchbase-change/) | Create or review `@Change` classes for `CouchbaseTargetSystem`, covering document migrations, collection or index changes, and transactional-vs-schema separation |
+| [`flamingock-non-transactional-targetsystem`](./flamingock-non-transactional-targetsystem/) | Configure `NonTransactionalTargetSystem` for systems without native transactions, including dependency and property registration |
+| [`flamingock-non-transactional-change`](./flamingock-non-transactional-change/) | Create or review `@Change` classes for `NonTransactionalTargetSystem`, emphasizing compensation, idempotency, recovery strategy, and non-transactional safety |
 
 ---
 
@@ -33,11 +43,7 @@ mkdir -p your-project/.agents/skills/
 ### Step 2 — Copy the skill
 
 ```bash
-cp -r flamingock-onboarding/ your-project/.agents/skills/
-# or
-cp -r flamingock-mongodb-sync-targetsystem/ your-project/.agents/skills/
-# or
-cp -r flamingock-mongodb-sync-change/ your-project/.agents/skills/
+cp -r flamingock-*/ your-project/.agents/skills/
 ```
 
 Your project structure should look like this:
@@ -47,17 +53,18 @@ your-project/
 └── .agents/
     └── skills/
         ├── flamingock-onboarding/
-        │   ├── SKILL.md
-        │   └── references/
-        │       └── ...
         ├── flamingock-mongodb-sync-targetsystem/
-        │   ├── SKILL.md
-        │   └── references/
-        │       └── ...
-        └── flamingock-mongodb-sync-change/
-            ├── SKILL.md
-            └── references/
-                └── ...
+        ├── flamingock-mongodb-sync-change/
+        ├── flamingock-sql-targetsystem/
+        ├── flamingock-sql-change/
+        ├── flamingock-dynamodb-targetsystem/
+        ├── flamingock-dynamodb-change/
+        ├── flamingock-couchbase-targetsystem/
+        ├── flamingock-couchbase-change/
+        ├── flamingock-mongodb-springdata-targetsystem/
+        ├── flamingock-mongodb-springdata-change/
+        ├── flamingock-non-transactional-targetsystem/
+        └── flamingock-non-transactional-change/
 ```
 
 ### Step 3 — Commit it
