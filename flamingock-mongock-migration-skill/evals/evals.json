@@ -1,0 +1,112 @@
+{
+  "skill_name": "mongock-migration-skill",
+  "evals": [
+    {
+      "id": 0,
+      "name": "supported-mongodb-sync-migration",
+      "prompt": "We already run Mongock with the MongoDB sync driver and want to migrate to Flamingock without rewriting deployed changes. What is the right path?",
+      "expected_output": "A supported migration response that leads with preserved legacy Mongock changes, explicitly says the runner/driver/wiring/config/bootstrap layer is what gets replaced, selects the MongoDB sync target system, explains the MongockSupport path, and gives the next migration-aware handoff without sounding like greenfield setup.",
+      "expectations": [
+        "States that deployed Mongock changes must stay unchanged",
+        "Marks the migration fit as Supported",
+        "Names the replacement focus as runner, driver or target-system binding, wiring/bootstrap/config, or equivalent integration-layer wording",
+        "Confirms the current backend/runtime as MongoDB sync or equivalent",
+        "Chooses flamingock-mongodb-sync-targetsystem or MongoDBSyncTargetSystem as the target path",
+        "Mentions MongockSupport and migration flags/defaults",
+        "Includes a next action or handoff",
+        "Does not start with dependency installation or generic Flamingock onboarding"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "blocked-unsupported-metadata",
+      "prompt": "Can you help me migrate from Mongock to Flamingock if several legacy changes use runAlways=true and we also rely on failFast=false?",
+      "expected_output": "A blocked migration response that names the unsupported Mongock semantics explicitly and does not pretend the migration is safe.",
+      "expectations": [
+        "Marks the migration fit as Blocked",
+        "Names runAlways=true as unsupported",
+        "Names failFast=false as unsupported",
+        "Does not offer a silent compatibility rewrite",
+        "Still states that legacy changes are preserved rather than rewritten"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ambiguous-backend-needs-confirmation",
+      "prompt": "I need to move an old Mongock project to Flamingock, but I have not checked which backend the old setup uses yet.",
+      "expected_output": "A response that stops at target confirmation, asks for the original Mongock backend, and avoids inventing a target system.",
+      "expectations": [
+        "Marks the migration fit as Need target confirmation",
+        "Asks to confirm the original backend",
+        "Does not silently choose MongoDB, DynamoDB, or Couchbase",
+        "Keeps the next step focused on confirmation",
+        "Does not jump into setup, dependency, or bootstrap instructions before backend confirmation"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "post-migration-handoff-to-springdata-targetsystem",
+      "prompt": "We already confirmed the legacy Mongock stack is Spring Boot with MongoTemplate. Migration looks supported. Now wire Flamingock for that target.",
+      "expected_output": "A migration-aware handoff to the MongoDB Spring Data target-system skill rather than a full rewrite of the migration workflow.",
+      "expectations": [
+        "Keeps the migration verdict concise",
+        "Restates preserved legacy scope or replacement framing before handoff",
+        "Chooses the MongoDB Spring Data target path",
+        "Redirects to flamingock-mongodb-springdata-targetsystem for wiring",
+        "Does not restart onboarding unless the user actually needs it",
+        "Does not act like this is a fresh Flamingock install from zero"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "migration-only-no-rewriter",
+      "prompt": "Take all my old Mongock ChangeSets and convert them into native Flamingock @Change classes for me.",
+      "expected_output": "A refusal to act as a Mongock-to-Flamingock rewriter, with a redirect back to the compatibility migration path.",
+      "expectations": [
+        "Refuses to rewrite deployed Mongock changes",
+        "Explains that the migration path is compatibility-oriented",
+        "Keeps the skill boundary migration-only",
+        "Offers the correct migration next step instead of generating rewritten changes"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "anti-greenfield-setup-first-answer",
+      "prompt": "Help me move our existing Mongock app to Flamingock. We want the old ChangeLogs preserved and then we can wire the new runtime.",
+      "expected_output": "A migration-first response that explicitly separates preserved legacy changes from replaced integration wiring and fails if it sounds like greenfield onboarding.",
+      "expectations": [
+        "Leads with migration framing, not generic setup",
+        "States that legacy ChangeLogs or ChangeUnits stay preserved",
+        "States that the integration layer gets replaced",
+        "Does not propose rewriting old changes into native Flamingock changes",
+        "Does not start with project bootstrap or dependency steps before migration framing"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "anti-missing-replacement-focus",
+      "prompt": "We already know this is a supported Mongock migration on DynamoDB. What should your answer definitely include?",
+      "expected_output": "A migration contract answer that includes preserved scope, backend, and the explicit replacement focus around runner, wiring, config, or target binding.",
+      "expectations": [
+        "Marks the migration fit as Supported",
+        "Confirms DynamoDB as the backend or target family",
+        "Includes preserved legacy scope",
+        "Includes explicit replacement focus for runner, wiring, config, bootstrap, or target-system binding",
+        "Includes blockers or guardrails and a next action or handoff"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "blocked-handoff-stays-migration-scoped",
+      "prompt": "I want to migrate from Mongock to Flamingock on Couchbase, but our legacy setup also uses a custom systemVersion. Can you just show the new Flamingock beans and ignore that?",
+      "expected_output": "A blocked response that preserves migration-only scope, names the blocker, and refuses to skip directly to greenfield-style wiring.",
+      "expectations": [
+        "Marks the migration fit as Blocked",
+        "Names non-default systemVersion as unsupported or a blocker",
+        "Refuses to skip straight to new wiring while the blocker remains",
+        "Keeps the answer migration-scoped instead of acting like onboarding",
+        "Does not rewrite or discard the legacy migration context"
+      ]
+    }
+  ]
+}

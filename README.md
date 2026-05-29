@@ -19,6 +19,7 @@ A collection of AI agent skills for the [Flamingock](https://flamingock.io) ecos
 | [`flamingock-couchbase-change`](./flamingock-couchbase-change/) | Create or review `@Change` classes for `CouchbaseTargetSystem`, covering document migrations, collection or index changes, and transactional-vs-schema separation |
 | [`flamingock-non-transactional-targetsystem`](./flamingock-non-transactional-targetsystem/) | Configure `NonTransactionalTargetSystem` for systems without native transactions, including dependency and property registration |
 | [`flamingock-non-transactional-change`](./flamingock-non-transactional-change/) | Create or review `@Change` classes for `NonTransactionalTargetSystem`, emphasizing compensation, idempotency, recovery strategy, and non-transactional safety |
+| [`flamingock-mongock-migration-skill`](./flamingock-mongock-migration-skill/) | Guide real Mongock -> Flamingock migrations without rewriting deployed changes, choose the matching target system, explain `@MongockSupport`, and hand off to onboarding/targetsystem/change skills only after migration fit is settled |
 
 ---
 
@@ -64,7 +65,8 @@ your-project/
         ├── flamingock-mongodb-springdata-targetsystem/
         ├── flamingock-mongodb-springdata-change/
         ├── flamingock-non-transactional-targetsystem/
-        └── flamingock-non-transactional-change/
+        ├── flamingock-non-transactional-change/
+        └── flamingock-mongock-migration-skill/
 ```
 
 ### Step 3 — Commit it
@@ -72,7 +74,7 @@ your-project/
 ```bash
 cd your-project
 git add .agents/skills/flamingock-*/
-git commit -m "chore: add flamingock agent skill"
+git commit -m "chore: add flamingock agent skills"
 ```
 
 The skill travels with the repo, so every developer (and every CI agent) on the project gets it automatically.
