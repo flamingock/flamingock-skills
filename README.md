@@ -35,6 +35,8 @@ This matters for Flamingock because the API has specific contracts that a genera
 
 Skills are installed per project. Copy the skill folder into your project's `.agents/skills/` directory.
 
+> For automatic install yoy can also run `flamingock install-skills` if you have the Flamingock CLI installed.
+
 ### Step 1 — Create the skills directory (if it doesn't exist)
 
 ```bash
