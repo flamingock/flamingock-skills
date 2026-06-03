@@ -68,7 +68,7 @@ When responding, prefer this order:
 ```java
 package com.example.config;
 
-import io.flamingock.sql.targetsystem.driver.SqlTargetSystem;
+import io.flamingock.targetsystem.sql.SqlTargetSystem;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -87,7 +87,7 @@ public class FlamingockSqlConfig {
 ```kotlin
 package com.example.config
 
-import io.flamingock.sql.targetsystem.driver.SqlTargetSystem
+import io.flamingock.targetsystem.sql.SqlTargetSystem
 import javax.sql.DataSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

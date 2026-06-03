@@ -65,7 +65,7 @@ When responding, prefer this order:
 ```java
 package com.example.config;
 
-import io.flamingock.mongodb.springdata.targetsystem.driver.MongoDBSpringDataTargetSystem;
+import io.flamingock.targetsystem.mongodb.springdata.MongoDBSpringDataTargetSystem;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -84,7 +84,7 @@ public class FlamingockMongoConfig {
 ```kotlin
 package com.example.config
 
-import io.flamingock.mongodb.springdata.targetsystem.driver.MongoDBSpringDataTargetSystem
+import io.flamingock.targetsystem.mongodb.springdata.MongoDBSpringDataTargetSystem
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.core.MongoTemplate

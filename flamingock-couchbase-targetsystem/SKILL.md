@@ -70,7 +70,7 @@ When responding, prefer this order:
 package com.example.config;
 
 import com.couchbase.client.java.Cluster;
-import io.flamingock.couchbase.targetsystem.driver.CouchbaseTargetSystem;
+import io.flamingock.targetsystem.couchbase.CouchbaseTargetSystem;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -89,7 +89,7 @@ public class FlamingockCouchbaseConfig {
 package com.example.config
 
 import com.couchbase.client.java.Cluster
-import io.flamingock.couchbase.targetsystem.driver.CouchbaseTargetSystem
+import io.flamingock.targetsystem.couchbase.CouchbaseTargetSystem
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

@@ -89,10 +89,9 @@ When responding, prefer this order:
 ```java
 package com.example;
 
-import io.flamingock.core.api.audit.AuditStore;
-import io.flamingock.mongodb.sync.auditstore.MongoDBSyncAuditStore;
-import io.flamingock.springboot.EnableFlamingock;
-import io.flamingock.springboot.annotations.Stage;
+import io.flamingock.api.annotations.EnableFlamingock;
+import io.flamingock.api.annotations.Stage;
+import io.flamingock.store.mongodb.sync.MongoDBSyncAuditStore;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -106,7 +105,7 @@ public class DemoApplication {
     }
 
     @Bean
-    AuditStore flamingockAuditStore() {
+    MongoDBSyncAuditStore flamingockAuditStore(MongoDBSyncTargetSystem targetSystem) {
         return MongoDBSyncAuditStore.from(targetSystem);
     }
 }

@@ -59,6 +59,10 @@ For the most up-to-date syntax, features, and best practices, always consult the
 - **Block unsupported Mongock semantics immediately:** `runAlways = true`, `failFast = false`, or non-default `systemVersion`.
 - **Code and tests beat docs.** If examples or docs conflict with inspected behavior, stay with inspected behavior.
 - **Do not sound like greenfield onboarding.** Do not start with dependency installation, bean wiring, or full bootstrap steps before naming the migration frame and backend.
+- **Require the `mongock-support` artifact.** The `@MongockSupport` annotation lives in `io.flamingock.support.mongock.annotations`. Pull it in via the Gradle plugin module `mongock()` (i.e. `flamingock { community(); mongodb(); mongock() }`) or the Maven dependency `io.flamingock:mongock-support`. Without it, compile fails with `cannot find symbol: class MongockSupport`.
+- **Do not declare an empty user `@Stage` when only legacy Mongock changes exist.** Pipeline validation fails with `Stage[X] must contain at least one change` because legacy `@ChangeUnit` classes go to the auto-generated `flamingock-legacy-stage`, NOT a user-defined `@Stage`. Use bare `@EnableFlamingock` until at least one native `@Change` class exists in the project.
+- **Mongock `disableTransaction()` / `setTransactionEnabled(false)` does not map to a documented Flamingock fluent option** on `MongoDBSyncTargetSystem`. If the legacy Mongo deployment is a replica set with transactions previously suppressed, raise this explicitly — it is not covered by the supported `withReadConcern` / `withReadPreference` / `withWriteConcern` surface.
+- **Known transitive-dep gap in `flamingock-community` BOM versions where one importer artifact is missing from Maven Central** (observed: `mongock-importer-dynamodb:1.4.2`). When the runtime classpath fails to resolve this transitive, force the previous patch via Gradle `resolutionStrategy.force(...)` or a Maven `<dependencyManagement>` override.
 
 ## Shared Migration Workflow
 Follow this order:
