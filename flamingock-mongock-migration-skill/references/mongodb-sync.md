@@ -55,14 +55,3 @@ If the project has zero native Flamingock `@Change` classes and only legacy Mong
 - Reason: legacy `@ChangeUnit` classes are placed in the auto-generated `flamingock-legacy-stage`. Any user-declared `@Stage` is treated as a NATIVE-only stage and requires at least one native `@Change` class, otherwise pipeline validation fails with `Stage[X] must contain at least one change`.
 - Once the project adds a real native `@Change`, reintroduce `@Stage(location = "...")` pointing at the package containing the native changes.
 
-### Known transitive-dep gap
-
-Some 1.4.x community builds pull a transitive `mongock-importer-dynamodb:<version>` that is not always published to Maven Central (observed: `1.4.2`). If gradle/maven resolution fails on this artifact, force the previous patch:
-
-```kotlin
-configurations.all {
-    resolutionStrategy {
-        force("io.flamingock:mongock-importer-dynamodb:1.4.1")
-    }
-}
-```
