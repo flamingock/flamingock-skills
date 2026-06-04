@@ -69,7 +69,7 @@ package com.example.config;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import io.flamingock.mongodb.sync.targetsystem.driver.MongoDBSyncTargetSystem;
+import io.flamingock.targetsystem.mongodb.sync.MongoDBSyncTargetSystem;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -94,7 +94,7 @@ package com.example.config
 
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
-import io.flamingock.mongodb.sync.targetsystem.driver.MongoDBSyncTargetSystem
+import io.flamingock.targetsystem.mongodb.sync.MongoDBSyncTargetSystem
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

@@ -64,7 +64,7 @@ When responding, prefer this order:
 ```java
 package com.example.config;
 
-import io.flamingock.core.targetsystem.driver.NonTransactionalTargetSystem;
+import io.flamingock.targetsystem.nontransactional.NonTransactionalTargetSystem;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -85,7 +85,7 @@ public class FlamingockS3Config {
 ```kotlin
 package com.example.config
 
-import io.flamingock.core.targetsystem.driver.NonTransactionalTargetSystem
+import io.flamingock.targetsystem.nontransactional.NonTransactionalTargetSystem
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.services.s3.S3Client

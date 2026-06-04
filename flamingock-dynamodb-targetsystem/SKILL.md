@@ -67,7 +67,7 @@ When responding, prefer this order:
 ```java
 package com.example.config;
 
-import io.flamingock.dynamodb.targetsystem.driver.DynamoDBTargetSystem;
+import io.flamingock.targetsystem.dynamodb.DynamoDBTargetSystem;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -86,7 +86,7 @@ public class FlamingockDynamoConfig {
 ```kotlin
 package com.example.config
 
-import io.flamingock.dynamodb.targetsystem.driver.DynamoDBTargetSystem
+import io.flamingock.targetsystem.dynamodb.DynamoDBTargetSystem
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
