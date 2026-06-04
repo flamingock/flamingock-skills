@@ -58,6 +58,12 @@ val dynamoDbClient = DynamoDbClient.builder()
     .build()
 ```
 
+### AuditStore is mandatory
+
+`Flamingock.builder()...build()` fails with `BuilderException: AuditStore must be configured before running Flamingock` unless `setAuditStore(...)` is called. Wire `DynamoDBAuditStore` via its static `from(targetSystem)` factory — the constructor is private; do NOT call `new DynamoDBAuditStore(client)`.
+
+Import: `io.flamingock.store.dynamodb.DynamoDBAuditStore`.
+
 ### Java setup path
 
 Use only the constructor proven by the Flamingock source:
@@ -66,13 +72,16 @@ Use only the constructor proven by the Flamingock source:
 DynamoDBTargetSystem dynamoTargetSystem =
     new DynamoDBTargetSystem("YOUR_TARGET_SYSTEM_ID", dynamoDbClient);
 
+DynamoDBAuditStore auditStore = DynamoDBAuditStore.from(dynamoTargetSystem);
+
 Flamingock.builder()
+    .setAuditStore(auditStore)
     .addTargetSystem(dynamoTargetSystem)
     .build()
     .run();
 ```
 
-If the project already has a builder chain, add only the `.addTargetSystem(dynamoTargetSystem)` step to that existing setup.
+If the project already has a builder chain, add `.setAuditStore(auditStore)` and `.addTargetSystem(dynamoTargetSystem)` to that existing setup.
 
 ### Kotlin setup path
 
@@ -82,10 +91,13 @@ Use the same source-backed constructor, but keep the output Kotlin-only:
 val dynamoTargetSystem =
     DynamoDBTargetSystem("YOUR_TARGET_SYSTEM_ID", dynamoDbClient)
 
+val auditStore = DynamoDBAuditStore.from(dynamoTargetSystem)
+
 Flamingock.builder()
+    .setAuditStore(auditStore)
     .addTargetSystem(dynamoTargetSystem)
     .build()
     .run()
 ```
 
-If the project already has a builder chain, add only the `.addTargetSystem(dynamoTargetSystem)` step to that existing setup.
+If the project already has a builder chain, add `.setAuditStore(auditStore)` and `.addTargetSystem(dynamoTargetSystem)` to that existing setup.

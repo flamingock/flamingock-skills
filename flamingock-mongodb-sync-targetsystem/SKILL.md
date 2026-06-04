@@ -35,6 +35,11 @@ For the most up-to-date syntax, features, and best practices, always consult the
   - For Maven/manual setups: include `io.flamingock:flamingock-mongodb-sync-targetsystem` and, for Spring Boot, `io.flamingock:flamingock-springboot-integration` explicitly.
   - Only add `org.mongodb:mongodb-driver-sync` if the skill is also creating the `MongoClient`.
 
+### 1b. AuditStore Wiring (Community)
+- **Mandatory**: in standalone Community setups `Flamingock.builder()` requires `setAuditStore(...)`. Missing it throws `BuilderException: AuditStore must be configured before running Flamingock`.
+- **Factory**: use `MongoDBSyncAuditStore.from(mongoTargetSystem)`. The constructor is private — do NOT call `new MongoDBSyncAuditStore(client, db)`.
+- **Import**: `io.flamingock.store.mongodb.sync.MongoDBSyncAuditStore`.
+
 ### 2. MongoClient Handling
 - **Auto-detection**: Briefly check if a `MongoClient` bean or variable already exists in the project.
 - **Orphan Client Rule**: If no `MongoClient` bean or variable exists, generate it immediately instead of asking the user to create it first.
@@ -84,6 +89,11 @@ public class FlamingockMongoConfig {
     @Bean
     MongoDBSyncTargetSystem mongoTargetSystem(MongoClient mongoClient) {
         return new MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO");
+    }
+
+    @Bean
+    MongoDBSyncAuditStore mongoAuditStore(MongoDBSyncTargetSystem mongoTargetSystem) {
+        return MongoDBSyncAuditStore.from(mongoTargetSystem);
     }
 }
 ```

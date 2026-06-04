@@ -63,6 +63,12 @@ MongoClient mongoClient = MongoClients.create("TODO");
 val mongoClient = MongoClients.create("TODO")
 ```
 
+### AuditStore is mandatory
+
+`Flamingock.builder()...build()` fails with `BuilderException: AuditStore must be configured before running Flamingock` unless `setAuditStore(...)` is called. Wire `MongoDBSyncAuditStore` via its static `from(targetSystem)` factory — the constructor is private; do NOT call `new MongoDBSyncAuditStore(client, db)`.
+
+Import: `io.flamingock.store.mongodb.sync.MongoDBSyncAuditStore`.
+
 ### Java setup path
 
 Use only the constructor proven by the Flamingock source:
@@ -71,13 +77,16 @@ Use only the constructor proven by the Flamingock source:
 MongoDBSyncTargetSystem mongoTargetSystem =
     new MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO");
 
+MongoDBSyncAuditStore auditStore = MongoDBSyncAuditStore.from(mongoTargetSystem);
+
 Flamingock.builder()
+    .setAuditStore(auditStore)
     .addTargetSystem(mongoTargetSystem)
     .build()
     .run();
 ```
 
-If the project already has a builder chain, add only the `.addTargetSystem(mongoTargetSystem)` step to that existing setup.
+If the project already has a builder chain, add `.setAuditStore(auditStore)` and `.addTargetSystem(mongoTargetSystem)` to that existing setup.
 
 ### Kotlin setup path
 
@@ -87,13 +96,16 @@ Use the same source-backed constructor, but keep the output Kotlin-only:
 val mongoTargetSystem =
     MongoDBSyncTargetSystem("YOUR_TARGET_SYSTEM_ID", mongoClient, "TODO")
 
+val auditStore = MongoDBSyncAuditStore.from(mongoTargetSystem)
+
 Flamingock.builder()
+    .setAuditStore(auditStore)
     .addTargetSystem(mongoTargetSystem)
     .build()
     .run()
 ```
 
-If the project already has a builder chain, add only the `.addTargetSystem(mongoTargetSystem)` step to that existing setup.
+If the project already has a builder chain, add `.setAuditStore(auditStore)` and `.addTargetSystem(mongoTargetSystem)` to that existing setup.
 
 ### Optional concern tuning
 

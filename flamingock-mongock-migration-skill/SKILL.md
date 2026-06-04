@@ -4,7 +4,7 @@ description: Use this skill when the user wants to migrate an existing Mongock i
 license: Apache-2.0
 metadata:
   author: Flamingock
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Mongock Migration Skill
@@ -61,8 +61,23 @@ For the most up-to-date syntax, features, and best practices, always consult the
 - **Do not sound like greenfield onboarding.** Do not start with dependency installation, bean wiring, or full bootstrap steps before naming the migration frame and backend.
 - **Require the `mongock-support` artifact.** The `@MongockSupport` annotation lives in `io.flamingock.support.mongock.annotations`. Pull it in via the Gradle plugin module `mongock()` (i.e. `flamingock { community(); mongodb(); mongock() }`) or the Maven dependency `io.flamingock:mongock-support`. Without it, compile fails with `cannot find symbol: class MongockSupport`.
 - **Do not declare an empty user `@Stage` when only legacy Mongock changes exist.** Pipeline validation fails with `Stage[X] must contain at least one change` because legacy `@ChangeUnit` classes go to the auto-generated `flamingock-legacy-stage`, NOT a user-defined `@Stage`. Use bare `@EnableFlamingock` until at least one native `@Change` class exists in the project.
-- **Mongock `disableTransaction()` / `setTransactionEnabled(false)` does not map to a documented Flamingock fluent option** on `MongoDBSyncTargetSystem`. If the legacy Mongo deployment is a replica set with transactions previously suppressed, raise this explicitly — it is not covered by the supported `withReadConcern` / `withReadPreference` / `withWriteConcern` surface.
-- **Known transitive-dep gap in `flamingock-community` BOM versions where one importer artifact is missing from Maven Central** (observed: `mongock-importer-dynamodb:1.4.2`). When the runtime classpath fails to resolve this transitive, force the previous patch via Gradle `resolutionStrategy.force(...)` or a Maven `<dependencyManagement>` override.
+- **Mongock `disableTransaction()` / `setTransactionEnabled(false)` does not map to a documented Flamingock fluent option** on `MongoDBSyncTargetSystem`. Apply this decision tree:
+  - Standalone Mongo (no replica set) -> drop the flag. Safe. Mongo standalone has no transactions to disable.
+  - Replica set, transactions intentionally suppressed -> blocker. No fluent equivalent on `MongoDBSyncTargetSystem`. Escalate, do not silently enable transactions.
+  - Replica set, transactions desired -> drop the flag. Flamingock uses transactions by default on replica sets.
+  - The supported tuning surface is `withReadConcern` / `withReadPreference` / `withWriteConcern` only.
+- **AuditStore is mandatory on the Flamingock builder.** `Flamingock.builder()...build()` throws `BuilderException: AuditStore must be configured before running Flamingock` if `setAuditStore(...)` is missing. Wire the backend-matching AuditStore using its static `from(targetSystem)` factory (constructors are private). Example: `MongoDBSyncAuditStore.from(mongoTargetSystem)` then `.setAuditStore(auditStore)`. Each backend reference shows its exact wiring.
+
+- **Flamingock Gradle plugin id is `io.flamingock`.** Pin the plugin version explicitly in the `plugins { ... }` block (e.g. `id("io.flamingock") version "[VERSION]"`) — the `flamingock { community(); mongodb(); mongock() }` DSL alone does not declare the plugin. Use the latest released Flamingock version; resolve via the `flamingock-onboarding` skill's helper at `<flamingock-skills-root>/flamingock-onboarding/scripts/last-version.sh`.
+
+## Cross-backend execution semantics
+
+These behaviors apply to every backend reference unless noted otherwise:
+
+- **`Flamingock.builder().build().run()` is synchronous.** Blocks until import + pending changes finish. Safe to wrap the underlying client (e.g. `MongoClient`, `DynamoDbClient`, Couchbase `Cluster`) in try-with-resources.
+- **Audit migration on first run** reads the legacy Mongock audit (collection/table depends on backend) and imports each entry as `already applied` into `flamingock-legacy-stage`. The legacy audit source is NOT deleted, renamed, or written to. Subsequent runs do not re-import.
+- **Expected stage count is 2** even when the user declared zero `@Stage`: Flamingock auto-creates `flamingock-system-stage` and `flamingock-legacy-stage`. A clean first run reports `0 newly applied, N already applied` for the legacy stage — that is success, not a no-op.
+- **Compile-time verification:** the Gradle annotation processor prints `[Flamingock] Searching for @MongockSupport annotation: Found` and `Generated metadata: 2 stages, N changes` during `compileJava`. If those lines are missing the `mongock()` plugin DSL module is not active.
 
 ## Shared Migration Workflow
 Follow this order:

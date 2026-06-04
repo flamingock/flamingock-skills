@@ -54,6 +54,12 @@ Cluster cluster = Cluster.connect("TODO", "TODO", "TODO");
 val cluster = Cluster.connect("TODO", "TODO", "TODO")
 ```
 
+### AuditStore is mandatory
+
+`Flamingock.builder()...build()` fails with `BuilderException: AuditStore must be configured before running Flamingock` unless `setAuditStore(...)` is called. Wire `CouchbaseAuditStore` via its static `from(targetSystem)` factory — the constructor is private; do NOT call `new CouchbaseAuditStore(cluster, bucket)`.
+
+Import: `io.flamingock.store.couchbase.CouchbaseAuditStore`.
+
 ### Java setup path
 
 Use only the constructor proven by the Flamingock source:
@@ -62,13 +68,16 @@ Use only the constructor proven by the Flamingock source:
 CouchbaseTargetSystem couchbaseTargetSystem =
     new CouchbaseTargetSystem("YOUR_TARGET_SYSTEM_ID", cluster, "TODO");
 
+CouchbaseAuditStore auditStore = CouchbaseAuditStore.from(couchbaseTargetSystem);
+
 Flamingock.builder()
+    .setAuditStore(auditStore)
     .addTargetSystem(couchbaseTargetSystem)
     .build()
     .run();
 ```
 
-If the project already has a builder chain, add only the `.addTargetSystem(couchbaseTargetSystem)` step to that existing setup.
+If the project already has a builder chain, add `.setAuditStore(auditStore)` and `.addTargetSystem(couchbaseTargetSystem)` to that existing setup.
 
 ### Kotlin setup path
 
@@ -78,10 +87,13 @@ Use the same source-backed constructor, but keep the output Kotlin-only:
 val couchbaseTargetSystem =
     CouchbaseTargetSystem("YOUR_TARGET_SYSTEM_ID", cluster, "TODO")
 
+val auditStore = CouchbaseAuditStore.from(couchbaseTargetSystem)
+
 Flamingock.builder()
+    .setAuditStore(auditStore)
     .addTargetSystem(couchbaseTargetSystem)
     .build()
     .run()
 ```
 
-If the project already has a builder chain, add only the `.addTargetSystem(couchbaseTargetSystem)` step to that existing setup.
+If the project already has a builder chain, add `.setAuditStore(auditStore)` and `.addTargetSystem(couchbaseTargetSystem)` to that existing setup.
