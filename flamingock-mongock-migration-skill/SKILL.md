@@ -68,7 +68,23 @@ For the most up-to-date syntax, features, and best practices, always consult the
   - The supported tuning surface is `withReadConcern` / `withReadPreference` / `withWriteConcern` only.
 - **AuditStore is mandatory on the Flamingock builder.** `Flamingock.builder()...build()` throws `BuilderException: AuditStore must be configured before running Flamingock` if `setAuditStore(...)` is missing. Wire the backend-matching AuditStore using its static `from(targetSystem)` factory (constructors are private). Example: `MongoDBSyncAuditStore.from(mongoTargetSystem)` then `.setAuditStore(auditStore)`. Each backend reference shows its exact wiring.
 
-- **Flamingock Gradle plugin id is `io.flamingock`.** Pin the plugin version explicitly in the `plugins { ... }` block (e.g. `id("io.flamingock") version "[VERSION]"`) — the `flamingock { community(); mongodb(); mongock() }` DSL alone does not declare the plugin. Use the latest released Flamingock version; resolve via the `flamingock-onboarding` skill's helper at `<flamingock-skills-root>/flamingock-onboarding/scripts/last-version.sh`.
+- **Flamingock Gradle plugin id is `io.flamingock`.** Pin the plugin version explicitly in the `plugins { ... }` block. The `flamingock { community(); mongodb(); mongock() }` DSL alone does not declare the plugin.
+
+## Flamingock Version Resolution
+
+When the user does not specify a Flamingock version, resolve it in this order:
+
+1. If the project already declares `io.flamingock` plugin, `flamingock-bom`, or Flamingock artifacts, reuse that existing version unless the user asked to upgrade.
+2. If the repository has centralized version management (`gradle.properties`, `libs.versions.toml`, parent POM, dependencyManagement), reuse the project convention.
+3. Otherwise resolve the latest stable Flamingock version from both:
+   - Gradle plugin marker:
+     `bash <skills-root>/flamingock-onboarding/scripts/last-version.sh io.flamingock`
+   - Maven artifact:
+     `bash <skills-root>/flamingock-onboarding/scripts/last-version.sh io.flamingock flamingock-community`
+4. Use the version only if both sources resolve to the same stable release.
+5. Exclude prerelease versions (`alpha`, `beta`, `rc`, `SNAPSHOT`) unless the user explicitly asks for them.
+6. If resolution fails because of network/sandbox, retry with escalated network permission.
+7. If resolution still fails, do not guess. Use `[VERSION]` and explicitly report that the version could not be resolved.
 
 ## Cross-backend execution semantics
 
