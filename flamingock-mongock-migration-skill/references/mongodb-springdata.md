@@ -11,6 +11,7 @@ Use this reference when the legacy Mongock setup is Spring Boot + Spring Data Mo
 ### Audit import notes
 - Import still runs first unless `skipImport = true`.
 - Strict defaults remain in force: empty origin fails by default and unknown imported entries fail by default.
+- **Empty/absent origin (default Mongo changelog collection) makes the first run fail** with `FlamingockException: No audit entries found when importing from '<origin>'.` This hits clean environments (fresh local DB, CI, new region) even though prod/staging with real history succeed. Surface this in final notes and present `emptyOriginAllowed = "true"` (or a placeholder) as the lever. See the "Empty-origin runtime gap" section in `SKILL.md` for the full options and trade-offs.
 - Keep the answer Spring Data-oriented; do not fall back to raw `MongoClient` / `ClientSession` guidance here.
 
 ### Routing boundary

@@ -12,6 +12,7 @@ Use this reference when the legacy Mongock setup is based on the MongoDB sync dr
 - Import runs before pending legacy Mongock changes unless `skipImport = true`.
 - `emptyOriginAllowed = false` and `ignoreUnknownEntries = false` stay strict by default.
 - Do not relax those defaults silently. If the user needs relaxed behavior, show the exact flag they are changing and why.
+- **Empty/absent origin (default `mongockChangeLog`) makes the first run fail** with `FlamingockException: No audit entries found when importing from '<origin>'.` This hits clean environments (fresh local DB, CI, new region) even though prod/staging with real history succeed. Surface this in final notes and present `emptyOriginAllowed = "true"` (or a placeholder) as the lever. See the "Empty-origin runtime gap" section in `SKILL.md` for the full options and trade-offs.
 
 ### Audit migration semantics (what happens on first run)
 - Flamingock reads the legacy Mongock audit collection (default `mongockChangeLog`) from the same database as the target system.
