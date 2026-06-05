@@ -12,6 +12,7 @@ Use this reference when the legacy Mongock backend is Couchbase.
 ### Audit import notes
 - Import runs before pending legacy Mongock changes unless `skipImport = true`.
 - Strict defaults remain the same: empty origin fails unless explicitly allowed, and unknown imported entries fail unless explicitly ignored.
+- **Empty/absent origin (the legacy audit collection / `{scope}.{collection}`) makes the first run fail** with `FlamingockException: No audit entries found when importing from '<origin>'.` This hits clean environments (fresh scope/collection, CI, new region) even though prod/staging with real history succeed. Surface this in final notes and present `emptyOriginAllowed = "true"` (or a placeholder) as the lever. See the "Empty-origin runtime gap" section in `SKILL.md` for the full options and trade-offs.
 - Keep audit reasoning Couchbase-specific and explicit about scope/collection shape.
 
 ### Routing boundary
