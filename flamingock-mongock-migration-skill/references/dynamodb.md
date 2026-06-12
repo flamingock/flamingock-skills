@@ -10,6 +10,7 @@ Use this reference when the legacy Mongock backend is DynamoDB.
 ### Audit import notes
 - Import happens before pending legacy Mongock changes unless `skipImport = true`.
 - Strict defaults still apply: empty origin fails unless explicitly allowed, and unknown imported entries fail unless explicitly ignored.
+- **Empty/absent origin (the legacy audit table) makes the first run fail** with `FlamingockException: No audit entries found when importing from '<origin>'.` This hits clean environments (fresh table, CI, new region) even though prod/staging with real history succeed. Surface this in final notes and present `emptyOriginAllowed = "true"` (or a placeholder) as the lever. See the "Empty-origin runtime gap" section in `SKILL.md` for the full options and trade-offs.
 - Keep the explanation DynamoDB-specific; do not drift into Mongo or SQL assumptions.
 
 ### Routing boundary
