@@ -4,7 +4,7 @@ description: Use this skill when the user wants to migrate an existing Mongock i
 license: Apache-2.0
 metadata:
   author: Flamingock
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Mongock Migration Skill
@@ -52,6 +52,7 @@ For the most up-to-date syntax, features, and best practices, always consult the
 - **Use the same backend family Mongock already used.** Do not silently switch MongoDB Sync to Spring Data, DynamoDB to Couchbase, or any other cross-target conversion.
 - **Require `@MongockSupport` for the migration path.** If it is missing, explain that the migration flow starts there.
 - **Treat these `@MongockSupport` flags as the supported surface:** `targetSystem`, `skipImport`, `origin`, `emptyOriginAllowed`, `ignoreUnknownEntries`.
+- **All `@MongockSupport` flags are `String`-typed, even the boolean-looking ones.** `skipImport`, `emptyOriginAllowed`, and `ignoreUnknownEntries` accept the literal strings `"true"`, `"false"`, or `""` (empty == default == `false`). They are strings so they can carry property placeholders, e.g. `emptyOriginAllowed = "${flamingock.empty-origin-allowed:false}"`. Always quote the value; never pass a bare boolean.
 - **Treat these defaults as strict unless the user changes them intentionally:**
   - import runs unless `skipImport = true`
   - empty origin fails unless `emptyOriginAllowed = true`
@@ -61,8 +62,72 @@ For the most up-to-date syntax, features, and best practices, always consult the
 - **Do not sound like greenfield onboarding.** Do not start with dependency installation, bean wiring, or full bootstrap steps before naming the migration frame and backend.
 - **Require the `mongock-support` artifact.** The `@MongockSupport` annotation lives in `io.flamingock.support.mongock.annotations`. Pull it in via the Gradle plugin module `mongock()` (i.e. `flamingock { community(); mongodb(); mongock() }`) or the Maven dependency `io.flamingock:mongock-support`. Without it, compile fails with `cannot find symbol: class MongockSupport`.
 - **Do not declare an empty user `@Stage` when only legacy Mongock changes exist.** Pipeline validation fails with `Stage[X] must contain at least one change` because legacy `@ChangeUnit` classes go to the auto-generated `flamingock-legacy-stage`, NOT a user-defined `@Stage`. Use bare `@EnableFlamingock` until at least one native `@Change` class exists in the project.
-- **Mongock `disableTransaction()` / `setTransactionEnabled(false)` does not map to a documented Flamingock fluent option** on `MongoDBSyncTargetSystem`. If the legacy Mongo deployment is a replica set with transactions previously suppressed, raise this explicitly — it is not covered by the supported `withReadConcern` / `withReadPreference` / `withWriteConcern` surface.
-- **Known transitive-dep gap in `flamingock-community` BOM versions where one importer artifact is missing from Maven Central** (observed: `mongock-importer-dynamodb:1.4.2`). When the runtime classpath fails to resolve this transitive, force the previous patch via Gradle `resolutionStrategy.force(...)` or a Maven `<dependencyManagement>` override.
+- **Mongock `disableTransaction()` / `setTransactionEnabled(false)` does not map to a documented Flamingock fluent option** on `MongoDBSyncTargetSystem`. Apply this decision tree:
+  - Standalone Mongo (no replica set) -> drop the flag. Safe. Mongo standalone has no transactions to disable.
+  - Replica set, transactions intentionally suppressed -> blocker. No fluent equivalent on `MongoDBSyncTargetSystem`. Escalate, do not silently enable transactions.
+  - Replica set, transactions desired -> drop the flag. Flamingock uses transactions by default on replica sets.
+  - The supported tuning surface is `withReadConcern` / `withReadPreference` / `withWriteConcern` only.
+- **AuditStore is mandatory on the Flamingock builder.** `Flamingock.builder()...build()` throws `BuilderException: AuditStore must be configured before running Flamingock` if `setAuditStore(...)` is missing. Wire the backend-matching AuditStore using its static `from(targetSystem)` factory (constructors are private). Example: `MongoDBSyncAuditStore.from(mongoTargetSystem)` then `.setAuditStore(auditStore)`. Each backend reference shows its exact wiring.
+
+- **Flamingock Gradle plugin id is `io.flamingock`.** Pin the plugin version explicitly in the `plugins { ... }` block. The `flamingock { community(); mongodb(); mongock() }` DSL alone does not declare the plugin.
+
+## Flamingock Version Resolution
+
+When the user does not specify a Flamingock version, resolve it in this order:
+
+1. If the project already declares `io.flamingock` plugin, `flamingock-bom`, or Flamingock artifacts, reuse that existing version unless the user asked to upgrade.
+2. If the repository has centralized version management (`gradle.properties`, `libs.versions.toml`, parent POM, dependencyManagement), reuse the project convention.
+3. Otherwise resolve the latest stable Flamingock version from both:
+   - Gradle plugin marker:
+     `bash <skills-root>/flamingock-onboarding/scripts/last-version.sh io.flamingock`
+   - Maven artifact:
+     `bash <skills-root>/flamingock-onboarding/scripts/last-version.sh io.flamingock flamingock-community`
+4. Use the version only if both sources resolve to the same stable release.
+5. Exclude prerelease versions (`alpha`, `beta`, `rc`, `SNAPSHOT`) unless the user explicitly asks for them.
+6. If resolution fails because of network/sandbox, retry with escalated network permission.
+7. If resolution still fails, do not guess. Use `[VERSION]` and explicitly report that the version could not be resolved.
+
+## Cross-backend execution semantics
+
+These behaviors apply to every backend reference unless noted otherwise:
+
+- **`Flamingock.builder().build().run()` is synchronous.** Blocks until import + pending changes finish. Safe to wrap the underlying client (e.g. `MongoClient`, `DynamoDbClient`, Couchbase `Cluster`) in try-with-resources.
+- **Audit migration on first run** reads the legacy Mongock audit (collection/table depends on backend) and imports each entry as `already applied` into `flamingock-legacy-stage`. The legacy audit source is NOT deleted, renamed, or written to. Subsequent runs do not re-import.
+- **Expected stage count is 2** even when the user declared zero `@Stage`: Flamingock auto-creates `flamingock-system-stage` and `flamingock-legacy-stage`. A clean first run reports `0 newly applied, N already applied` for the legacy stage — that is success, not a no-op.
+- **Compile-time verification:** the Gradle annotation processor prints `[Flamingock] Searching for @MongockSupport annotation: Found` and `Generated metadata: 2 stages, N changes` during `compileJava`. If those lines are missing the `mongock()` plugin DSL module is not active.
+
+## Empty-origin runtime gap (clean environments)
+
+This is a **runtime** outcome the skill cannot fully resolve at edit time, because it depends on the live database state — not the code. Always surface it explicitly in the final notes so the user is not surprised on first run.
+
+**The behavior:** when `skipImport` is `false` (the default), Flamingock imports the legacy Mongock audit before running pending changes. If the configured `origin` (the legacy Mongock audit collection/table) **does not exist or is empty**, the import fails hard, because `emptyOriginAllowed` defaults to `false`.
+
+**The symptom:** a `FlamingockException` at startup with a message of the form:
+
+```
+No audit entries found when importing from '<origin>'.
+```
+
+(`<origin>` is the resolved legacy audit source, e.g. the Mongock changelog collection.)
+
+**Why it matters:** the migrated app works perfectly against any environment that has a real Mongock history (production, staging — the majority case). But a **fresh/clean environment** (new local DB, CI from scratch, a new region, an ephemeral test container) has no legacy audit to import, so the same binary fails on first boot unless the empty case is allowed.
+
+**The fix — `emptyOriginAllowed`:** set it to `"true"` to let Flamingock treat an empty/absent origin as "nothing to import" and proceed to the pending changes instead of failing:
+
+```java
+@MongockSupport(
+    targetSystem = "mongo-demo",
+    emptyOriginAllowed = "true"
+)
+```
+
+**Recommended options to give the user (let them choose — this is an environment policy decision, not a code default):**
+1. **Placeholder-driven (recommended for mixed fleets):** keep it strict by default but overridable per environment, so prod stays safe while clean envs pass:
+   `emptyOriginAllowed = "${flamingock.empty-origin-allowed:false}"` — then set `flamingock.empty-origin-allowed=true` only where the origin may legitimately be empty (CI, fresh local, new region).
+2. **Always allow empty:** `emptyOriginAllowed = "true"` — simplest; appropriate when clean environments are expected to be the norm or when you want one binary to boot everywhere.
+3. **Keep strict (default):** leave it unset/`"false"` — appropriate when every environment is guaranteed to have a real Mongock history and an empty origin should be treated as a genuine misconfiguration worth failing on.
+
+**Guardrail:** do NOT silently flip `emptyOriginAllowed` to `"true"` as part of the migration. Strict-by-default is intentional: it protects against a wrong/empty `origin` masking a real data problem. Present it as an explicit, environment-aware choice and explain the trade-off. Note it only applies while `skipImport` is `false`.
 
 ## Shared Migration Workflow
 Follow this order:
@@ -87,6 +152,7 @@ Keep the main answer short and make this checklist explicit:
 - [ ] Name the replacement layer explicitly: runner, target-system/driver binding, wiring/bootstrap/config, `@MongockSupport`
 - [ ] Add or verify `@MongockSupport(targetSystem = "...")`
 - [ ] Decide whether audit import stays strict or needs explicit relaxation
+- [ ] Warn about the empty-origin runtime gap on clean environments and present the `emptyOriginAllowed` options
 - [ ] Check for unsupported Mongock metadata before proceeding
 - [ ] Hand off to the correct onboarding / targetsystem / change skill only after migration fit is settled
 
@@ -110,6 +176,7 @@ Keep the main answer short and make this checklist explicit:
 - Explicitly separate **what stays** from **what gets replaced**.
 - Keep target-specific detail in the selected reference, not duplicated in the main body.
 - Do not jump into onboarding-style setup steps until migration framing is explicit.
+- Always close with final notes covering the empty-origin runtime gap: the import fails on clean/empty environments with `FlamingockException: No audit entries found when importing from '<origin>'.`, and `emptyOriginAllowed = "true"` (or a placeholder) is the lever. Frame it as an environment choice, never as a silent default flip.
 - Once migration-only guidance is done, stop and hand off instead of continuing into a different skill's scope.
 
 ## Minimum Output Contract
@@ -123,6 +190,7 @@ Chosen target system: <one | pending confirmation>
 Replacement focus: <runner, driver/target binding, wiring/bootstrap/config, @MongockSupport>
 Required flags/defaults: <list>
 Guardrails/blockers: <list>
+Empty-origin note: <will first run hit 'No audit entries found' on a clean env? state the emptyOriginAllowed decision>
 Next action/handoff: <skill or action>
 ```
 
